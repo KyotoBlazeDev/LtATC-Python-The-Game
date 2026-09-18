@@ -114,7 +114,7 @@ class RadarCanvas(tk.Canvas):
             label_x, anchor = (x-12, "se") if x > width-140 else (x+12, "sw")
             number = f"{index}. " if index <= 9 else ""
             self.create_text(label_x, y-12, text=f"{number}{plane.callsign}\n{plane.altitude} ft  {round(plane.heading):03d}°",
-                             fill=color, anchor=anchor, font=("Consolas", 9, "bold"))
+                             fill=color, anchor=anchor, font=("Fixedsys", 9, "bold"))
         selected = simulation.get_aircraft(simulation.selected_callsign)
         if selected is not None:
             x, y = self.positions[selected.callsign]
@@ -133,22 +133,22 @@ class RadarCanvas(tk.Canvas):
             if self.separation_warning_image and not pair.critical:
                 self.create_image(width / 2, 8, image=self.separation_warning_image, anchor="n")
                 self.create_text(width / 2, 72, text=f"{pair.first} / {pair.second}",
-                                 fill=warning_color, anchor="n", font=("Consolas", 11, "bold"))
+                                 fill=warning_color, anchor="n", font=("Fixedsys", 11, "bold"))
             else:
                 self.create_text(12, 12, text=f"SEPARATION WARNING: {pair.first} / {pair.second}",
-                                 fill=warning_color, anchor="nw", font=("Consolas", 11, "bold"))
+                                 fill=warning_color, anchor="nw", font=("Fixedsys", 11, "bold"))
         if any(conflict.critical for conflict in conflicts) and int(time.monotonic() * 2) % 2 == 0:
             if self.critical_image:
                 self.create_image(width / 2, 60, image=self.critical_image, anchor="n")
             else:
                 self.create_text(width / 2, 60, text="CRITICAL! SAFETY MODE ON", fill="#ff2222",
-                                 anchor="n", font=("Consolas", 18, "bold"))
+                                 anchor="n", font=("Fixedsys", 18, "bold"))
         if simulation.paused and not simulation.game_over:
             # A compact corner annunciator keeps aircraft labels and the
             # runway visible while still making the held state unmistakable.
             self.create_rectangle(10, 10, 112, 42, fill="#202020", outline="#ffc90e", width=2)
             self.create_text(61, 26, text="PAUSED", fill="#ffc90e",
-                             font=("Consolas", 13, "bold"))
+                             font=("Fixedsys", 13, "bold"))
         self._draw_game_over(simulation)
 
     def _draw_game_over(self, simulation):
@@ -162,10 +162,10 @@ class RadarCanvas(tk.Canvas):
                 self.create_image(x, y, image=self.explosion_image, tags="collision")
             else:
                 self.create_text(x, y, text="✹", fill="#ff9020",
-                                 font=("Consolas", 48, "bold"), tags="collision")
+                                 font=("Fixedsys", 48, "bold"), tags="collision")
         self.create_rectangle(0, 0, width, 38, fill="#501414", outline="", tags="game_over")
         self.create_text(width / 2, 19, text="GAME OVER — COLLISION", fill="#ffffff",
-                         font=("Consolas", 16, "bold"), tags="game_over")
+                         font=("Fixedsys", 16, "bold"), tags="game_over")
 
     def _refresh_teletext(self, simulation, conflicts):
         """Draw a 40-column, 25-row character display over the game coordinates."""

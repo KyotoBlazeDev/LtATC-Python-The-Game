@@ -20,6 +20,7 @@ from ui.dialogs import show_report, show_warning
 from ui.lesson_panel import LessonPanel
 from ui.radar_canvas import RadarCanvas
 from ui.story_panel import StoryPanel
+from ui.theme import CLASSIC_GRAY, classic_title_bar, apply_classic_theme
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 
@@ -49,6 +50,7 @@ class MainWindow:
         self.sandbox = self.game.sandbox
         self.player_name_var = tk.StringVar(value="")
         load_bedstead(root)
+        apply_classic_theme(root)
         self.images = self._load_images()
         self.window_icons = ()
         try:
@@ -133,7 +135,7 @@ class MainWindow:
         self.status_fields = []
         for width in (18, 7, 12, 17, 24):
             field = tk.Label(bar, width=width, padx=4, pady=3, relief="sunken", bd=1,
-                             anchor="w", font=("Fixedsys", 9), bg="#c0c0c0")
+                             anchor="w", font="LtATCFixedFont", bg=CLASSIC_GRAY)
             field.pack(side="left", fill="x", expand=width == 24, padx=(1, 0), pady=1)
             self.status_fields.append(field)
         # Compatibility handle for existing integrations which configure the status text.
@@ -307,7 +309,7 @@ class MainWindow:
         return self.player_name_var.get().strip()[:24] or "Controller"
 
     def _player_name_input(self, parent):
-        tk.Label(parent, text="Your controller name (Lesson and Sandbox)").pack(pady=(8, 2))
+        tk.Label(parent, text="Controller name:", anchor="w").pack(fill="x", pady=(8, 2))
         tk.Entry(parent, textvariable=self.player_name_var, width=28).pack(pady=(0, 8))
 
     def _cancel_startup(self):
@@ -475,11 +477,10 @@ class MainWindow:
 
         menu = tk.Frame(panel, bg="#c0c0c0", bd=3, relief="raised", padx=12, pady=10)
         menu.pack()
-        tk.Label(menu, text="LtATC MAIN MENU", fg="#ffffff", bg="#000080",
-                 font=("Fixedsys", 12, "bold"), padx=55, pady=4).pack(fill="x", pady=(0, 8))
-        tk.Label(menu, text="Controller name", bg="#c0c0c0", font=("Fixedsys", 10)).pack()
+        classic_title_bar(menu, "LtATC Control Center").pack(fill="x", pady=(0, 8))
+        tk.Label(menu, text="Controller name:", bg=CLASSIC_GRAY, anchor="w").pack(fill="x")
         tk.Entry(menu, textvariable=self.player_name_var, width=30,
-                 font=("Fixedsys", 10)).pack(pady=(2, 8))
+                 font="TkDefaultFont").pack(pady=(2, 8))
         menu_buttons = []
         for label, mnemonic, command in (("> START STORY MODE", 2, self.show_story_menu),
                                          ("  LESSON TRAINING", 2, self.show_lesson_menu),
@@ -487,7 +488,7 @@ class MainWindow:
                                          ("  RESET PROGRESS", 2, self.reset_progress),
                                          ("  EXIT TO SYSTEM", 2, self.root.destroy)):
             button = tk.Button(menu, text=label, command=command, anchor="w", width=28,
-                               underline=mnemonic, takefocus=True, font=("Fixedsys", 11))
+                               underline=mnemonic, takefocus=True)
             button.pack(fill="x", pady=2)
             menu_buttons.append(button)
         # Tk draws the classic dotted focus rectangle when these buttons own focus.
@@ -514,13 +515,16 @@ class MainWindow:
     def show_lesson_menu(self):
         self.game.enter_menu()
         self._clear()
-        panel = tk.Frame(self.frame, padx=30, pady=30)
+        desktop = tk.Frame(self.frame, bg="#008080", padx=30, pady=30)
+        desktop.pack(fill="both", expand=True)
+        panel = tk.Frame(desktop, bd=3, relief="raised", padx=10, pady=8)
         panel.pack(expand=True)
-        tk.Label(panel, text="Choose a lesson", font=("TkDefaultFont", 19, "bold")).pack(pady=15)
+        classic_title_bar(panel, "LtATC Training Manager").pack(fill="x", pady=(0, 8))
+        tk.Label(panel, text="Select a training lesson", font="LtATCTitleFont", anchor="w").pack(fill="x", pady=(2, 6))
         self._player_name_input(panel)
         for lesson in LESSONS:
             completed = lesson.lesson_id in self.story.lessons_completed
-            tk.Button(panel, text=lesson.title,
+            tk.Button(panel, text=lesson.title, anchor="w",
                        image=self.images.get("green_mark") if completed else "", compound="right",
                        command=lambda lid=lesson.lesson_id: self.start_lesson(lid)).pack(fill="x", pady=6)
         tk.Button(panel, text="Back", command=self.show_menu).pack(fill="x", pady=12)
@@ -529,9 +533,12 @@ class MainWindow:
     def show_story_menu(self):
         self.game.enter_menu()
         self._clear()
-        panel = tk.Frame(self.frame, padx=30, pady=30)
+        desktop = tk.Frame(self.frame, bg="#008080", padx=30, pady=30)
+        desktop.pack(fill="both", expand=True)
+        panel = tk.Frame(desktop, bd=3, relief="raised", padx=10, pady=8)
         panel.pack(expand=True)
-        tk.Label(panel, text="Story Mode", font=("TkDefaultFont", 19, "bold")).pack(pady=15)
+        classic_title_bar(panel, "LtATC Incident Studies").pack(fill="x", pady=(0, 8))
+        tk.Label(panel, text="Story Mode", font="LtATCTitleFont").pack(pady=(2, 6))
         tk.Label(panel, text="Four simplified decision studies based on documented NTSB incidents.\n"
                               "Aircraft positions are schematic; each case links to its report.",
                   justify="center", wraplength=500).pack(pady=(0, 12))
@@ -539,7 +546,7 @@ class MainWindow:
             unlocked = self.story_manager.unlocked(chapter.chapter_id)
             completed = chapter.chapter_id in self.story.chapters_completed
             suffix = " 🔒" if not unlocked else ""
-            tk.Button(panel, text=chapter.title + suffix,
+            tk.Button(panel, text=chapter.title + suffix, anchor="w",
                        image=self.images.get("green_mark") if completed else "", compound="right",
                        state="normal" if unlocked else "disabled",
                        command=lambda cid=chapter.chapter_id: self.start_chapter(cid)).pack(fill="x", pady=6)

@@ -6,7 +6,7 @@ class StoryPanel(tk.LabelFrame):
     def __init__(self, parent, on_action):
         super().__init__(parent, text="Story objective", padx=8, pady=8)
         self.on_action = on_action
-        self.title = tk.Label(self, font=("TkDefaultFont", 11, "bold"), wraplength=300)
+        self.title = tk.Label(self, font="LtATCTitleFont", wraplength=300)
         self.title.pack(anchor="w")
         self.objective = tk.Label(self, wraplength=300, justify="left")
         self.objective.pack(anchor="w", pady=4)

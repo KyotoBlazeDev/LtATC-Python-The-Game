@@ -4,7 +4,7 @@ class LessonPanel(tk.LabelFrame):
     def __init__(self, parent, on_next, on_runway_check):
         super().__init__(parent, text="Lesson / dialogue", padx=10, pady=10)
         self.training_note = tk.Label(self)
-        self.title_label = tk.Label(self, text="Welcome", font=("TkDefaultFont", 12, "bold"))
+        self.title_label = tk.Label(self, text="Welcome", font="LtATCTitleFont")
         self.title_label.pack(anchor="w")
         self.objectives = tk.Label(self, text="Choose a mode to begin.", wraplength=300, justify="left")
         self.objectives.pack(anchor="w", pady=6)

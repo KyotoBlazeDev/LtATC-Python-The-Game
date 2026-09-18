@@ -3,7 +3,7 @@ import tkinter as tk
 class AircraftPanel(tk.LabelFrame):
     def __init__(self, parent):
         super().__init__(parent, text="Aircraft information", padx=10, pady=10)
-        self.label = tk.Label(self, text="Select an aircraft on radar", justify="left", font=("Consolas", 11))
+        self.label = tk.Label(self, text="Select an aircraft on radar", justify="left", font="LtATCFixedFont")
         self.label.pack(anchor="w", fill="x")
 
     def refresh(self, plane):
