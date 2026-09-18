@@ -7,9 +7,9 @@ Release date: **October 7, 2026**.
 
 ## AI usage disclaimer
 
-AI-assisted tools were used during development. All resulting material was reviewed and integrated under the developer's direction. The developer remains responsible for the project's design, implementation, and published content.
+AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
 
-The source project, **Learn The ATC — Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
+The source project, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
 
 The original story document identifies **TRAINER01 as the training program**, not an aircraft. Lesson aircraft therefore use the story's documented callsigns: **CARGO 90**, **ACADEMY 01**, **EAGLE 21**, and **JET 404**. Sandbox traffic begins with **ACADEMY 02** and continues the ACADEMY numbering. TRAINER01 remains available only as a program or dialogue identity.
 
