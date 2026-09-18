@@ -1,5 +1,4 @@
 # LtATC: Python The Game
-
 LtATC: Python The Game is an educational ATC game prototype inspired by Learn the ATC: Python Edition. It is not intended for real-world air traffic control training or operational use.
 
 Developed by **KyotoBlazeDev**.
@@ -14,14 +13,19 @@ The source project, **Learn The ATC — Python Edition**, is a Tkinter education
 
 The original story document identifies **TRAINER01 as the training program**, not an aircraft. Lesson aircraft therefore use the story's documented callsigns: **CARGO 90**, **ACADEMY 01**, **EAGLE 21**, and **JET 404**. Sandbox traffic begins with **ACADEMY 02** and continues the ACADEMY numbering. TRAINER01 remains available only as a program or dialogue identity.
 
+## Plot
+
+You work as an air traffic controller, interpreting the radar picture and responding to aircraft requests. Every scenario is simulated and must not be used for real-world ATC operations.
+
 ## Run
 
 Use Python 3.11 or newer. No packages or network access are required.
 
-```bash
+```powershell
 python main.py
 ```
 
+## Gameplay / How to use
 The Tkinter window opens at the main menu. Story Mode offers four case studies; Lesson Mode offers three separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
 
 Enter a controller name on the main menu (or lesson menu) to use it in Lesson and Sandbox dialogue, the status bar, and lesson reports. Leave it blank to use **Controller**. The name is kept only while the app is open and does not change Story Mode's source-labeled case files. Lesson and Story completion is saved locally between sessions; use **Reset progress** on the main menu to clear it.
