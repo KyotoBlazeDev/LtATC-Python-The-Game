@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+/.vs/LtATC-Python-The-Game.slnx/FileContentIndex
+*.wsuo
+/.vs/LtATC-Python-The-Game.slnx/v18/DocumentLayout.backup.json
+/.vs/LtATC-Python-The-Game.slnx/v18/DocumentLayout.json
+/.vs/slnx.sqlite
+/.vs
