@@ -14,7 +14,8 @@ class RadarCanvas(tk.Canvas):
     def __init__(self, parent, on_select, plane_image=None, selected_frame=None,
                  unselected_frame=None, paused_image=None, critical_image=None,
                  separation_warning_frame=None, separation_critical_frame=None,
-                 directional_prompt=None, separation_warning_image=None, explosion_image=None):
+                 directional_prompt=None, separation_warning_image=None, explosion_image=None,
+                 on_teletext_page=None):
         super().__init__(parent, bg="#101e23", highlightthickness=0, width=700, height=590)
         self.on_select = on_select
         self.plane_image = plane_image
@@ -27,6 +28,7 @@ class RadarCanvas(tk.Canvas):
         self.directional_prompt = directional_prompt
         self.separation_warning_image = separation_warning_image
         self.explosion_image = explosion_image
+        self.on_teletext_page = on_teletext_page
         self.bind("<Button-1>", self._click)
         self.positions = {}
         self.teletext = False
@@ -54,6 +56,11 @@ class RadarCanvas(tk.Canvas):
         # Classic Tk widgets do not consistently transfer keyboard focus to a
         # canvas on click. Keep global aircraft shortcuts active after radar use.
         self.focus_force()
+        if self.teletext and event.y >= self.winfo_height() * 24 / 25:
+            if self.on_teletext_page is not None:
+                section = min(3, max(0, int(event.x / max(self.winfo_width() / 4, 1))))
+                self.on_teletext_page(100 + section)
+            return
         hit_x = self.winfo_width() / (160 if self.dos else 80) if self.teletext or self.dos else 24
         hit_y = self.winfo_height() / 50 if self.teletext or self.dos else 24
         for callsign, (x, y) in reversed(list(self.positions.items())):
@@ -228,15 +235,11 @@ class RadarCanvas(tk.Canvas):
             put(1, 20, "NO TRAFFIC IN CONTROL AREA", cyan)
         if conflicts:
             pair = conflicts[0]
-            self.create_rectangle(0, 24 * cell_h, width, height, fill="#770000", outline="")
-            put(1, 24, f"WARNING {pair.first} / {pair.second}", white)
+            self.create_rectangle(0, 23 * cell_h, width, 24 * cell_h, fill="#770000", outline="")
+            put(1, 23, f"WARNING {pair.first} / {pair.second}", white)
         else:
-            for left, right, color in ((0, 10, red), (10, 20, green), (20, 30, yellow), (30, 40, blue)):
-                self.create_rectangle(left * cell_w, 24 * cell_h, right * cell_w, height, fill=color, outline="")
-            put(1, 24, "TAB SELECT", white)
-            put(12, 24, "1-9 TARGET", "#000000")
-            put(22, 24, "0 CLEAR", "#000000")
-            put(32, 24, "P100", white)
+            put(1, 23, "TAB/1-9 SELECT   0 CLEAR", cyan)
+        self._draw_teletext_footer(page, put, cell_w, cell_h, white, red, green, yellow, blue)
 
     def _refresh_teletext_info(self, simulation, conflicts, page, put,
                                cell_w, cell_h, white, cyan, yellow, red, green, blue):
@@ -280,13 +283,20 @@ class RadarCanvas(tk.Canvas):
                 put(1, 6, "NO CURRENT SEPARATION ALERTS", green)
             put(1, 22, "ALERTS REFRESH WITH SIMULATION", cyan)
         put(0, 23, "=" * 40, yellow)
-        for left, right, color in ((0, 10, red), (10, 20, green), (20, 30, yellow), (30, 40, blue)):
+        self._draw_teletext_footer(page, put, cell_w, cell_h, white, red, green, yellow, blue)
+
+    def _draw_teletext_footer(self, page, put, cell_w, cell_h, white, red, green, yellow, blue):
+        """Draw the persistent, clickable P100-P103 navigation row."""
+        entries = ((100, 0, 10, red),
+                   (101, 10, 20, green),
+                   (102, 20, 30, yellow),
+                   (103, 30, 40, blue))
+        for number, left, right, color in entries:
             self.create_rectangle(left * cell_w, 24 * cell_h, right * cell_w, 25 * cell_h,
-                                  fill=color, outline="")
-        put(1, 24, "100 RADAR", white)
-        put(11, 24, "101 TRAFFIC", "#000000")
-        put(21, 24, "102 RUNWAY", "#000000")
-        put(31, 24, "103 ALERTS", white)
+                                  fill=color, outline=white if number == page else "", width=2)
+            foreground = white if color in (red, blue) else "#000000"
+            prefix = ">" if number == page else " "
+            put(left + 2, 24, f"{prefix}P{number}", foreground)
 
     def _refresh_dos(self, simulation, conflicts):
         """Draw an 80 x 25 DOS-style tactical screen."""

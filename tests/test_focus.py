@@ -61,6 +61,21 @@ class FocusTests(unittest.TestCase):
         window.tick()
         self.assertFalse(window.simulation.paused)
 
+    def test_display_commands_ignore_destroyed_game_screen_from_main_menu(self):
+        window = self.make_window(GameMode.MAIN_MENU)
+        window.radar = Mock()
+        window.teletext_enabled = Mock()
+        window.dos_enabled = Mock()
+        window.teletext_page = Mock()
+        window.teletext_pages = ("P100 Radar", "P101 Traffic", "P102 Runway", "P103 Alerts")
+
+        window._set_display_mode("teletext")
+        window._select_teletext_page(103)
+
+        window.radar.winfo_exists.assert_not_called()
+        window.teletext_enabled.set.assert_not_called()
+        window.teletext_page.set.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -113,6 +113,13 @@ class MainWindow:
         view = tk.Menu(menu_bar, tearoff=False)
         view.add_command(label="Radar Display", command=self._show_radar_display)
         view.add_command(label="Teletext Display", command=lambda: self._set_display_mode("teletext"))
+        teletext_pages = tk.Menu(view, tearoff=False)
+        for page, title in ((100, "Radar"), (101, "Traffic"), (102, "Runway"), (103, "Alerts")):
+            teletext_pages.add_command(
+                label=f"P{page} {title}",
+                command=lambda selected_page=page: self._select_teletext_page(selected_page),
+            )
+        view.add_cascade(label="Teletext Page", menu=teletext_pages)
         view.add_command(label="DOS Console", command=lambda: self._set_display_mode("dos"))
         menu_bar.add_cascade(label="View", menu=view, underline=0)
 
@@ -197,7 +204,7 @@ class MainWindow:
         messagebox.showinfo("LtATC Aircraft Manager", f"ACTIVE AIRCRAFT\n\n{callsigns}\n\nSelect a target on radar; press Delete to remove it.", parent=self.root)
 
     def _set_display_mode(self, mode):
-        if not hasattr(self, "teletext_enabled"):
+        if not self._display_widgets_ready():
             return
         self.teletext_enabled.set(mode == "teletext")
         self.dos_enabled.set(mode == "dos")
@@ -210,6 +217,15 @@ class MainWindow:
 
     def _show_radar_display(self):
         self._set_display_mode("radar")
+
+    def _display_widgets_ready(self):
+        """True only while the current game screen still owns live display widgets."""
+        if self.simulation.mode == GameMode.MAIN_MENU or not hasattr(self, "radar"):
+            return False
+        try:
+            return bool(self.radar.winfo_exists())
+        except tk.TclError:
+            return False
 
     def _show_keyboard_help(self):
         messagebox.showinfo("LtATC Keyboard Controls", "Alt+F/C/S/V/H  Open application menus\nAlt+S/L/B  Start Story, Lesson, or Sandbox\nTab / Shift+Tab  Select aircraft\n1–9  Select aircraft directly\n0  Clear selection\nDelete  Remove selected sandbox aircraft\nP / R  Pause or resume", parent=self.root)
@@ -650,7 +666,8 @@ class MainWindow:
                                  self.images.get("separation_warning_frame"),
                                  self.images.get("separation_critical_frame"),
                                  self.images.get("directional_prompt"),
-                                 self.images.get("separation_warning"), self.images.get("explosion"))
+                                 self.images.get("separation_warning"), self.images.get("explosion"),
+                                 self._select_teletext_page)
         sidebar = tk.Frame(body, width=360)
         sidebar.pack(side="right", fill="y")
         sidebar.pack_propagate(False)
@@ -689,6 +706,15 @@ class MainWindow:
     def _choose_teletext_page(self):
         self.teletext_enabled.set(True)
         self._toggle_teletext()
+
+    def _select_teletext_page(self, page):
+        """Open one of the four teletext pages from a menu or footer click."""
+        if not self._display_widgets_ready() or not hasattr(self, "teletext_page"):
+            return
+        match = next((item for item in self.teletext_pages if item.startswith(f"P{page} ")), None)
+        if match is not None:
+            self.teletext_page.set(match)
+            self._choose_teletext_page()
 
     def _step_teletext_page(self, direction):
         index = self.teletext_pages.index(self.teletext_page.get())
