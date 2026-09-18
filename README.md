@@ -1,4 +1,7 @@
 # LtATC: Python The Game
+
+<img width="1099" height="278" alt="LtATC_Python_The_Game_logo" src="https://github.com/user-attachments/assets/d94e3394-95b7-4bab-95a0-95dcecce6ee5" />
+
 LtATC: Python The Game is an educational ATC game prototype inspired by Learn the ATC: Python Edition. It is not intended for real-world air traffic control training or operational use.
 
 Developed by **KyotoBlazeDev**.
