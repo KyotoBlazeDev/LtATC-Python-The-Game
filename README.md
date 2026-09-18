@@ -4,7 +4,7 @@
 
 LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, they turned into a Windows 95-style era ahead of the 1990s. It is not intended for real-world air traffic control training or operational use.
 
-<img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/76e85d63-d1f7-406a-a04b-254a7b4d8a73" />
+<img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
 
 Developed by **KyotoBlazeDev**.
 
