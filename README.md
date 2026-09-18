@@ -2,7 +2,9 @@
 
 <img width="1099" height="278" alt="LtATC_Python_The_Game_logo" src="https://github.com/user-attachments/assets/d94e3394-95b7-4bab-95a0-95dcecce6ee5" />
 
-LtATC: Python The Game is an educational ATC game prototype inspired by Learn the ATC: Python Edition. It is not intended for real-world air traffic control training or operational use.
+LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, they turned into a Windows 95-style era ahead of the 1990s. It is not intended for real-world air traffic control training or operational use.
+
+<img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/76e85d63-d1f7-406a-a04b-254a7b4d8a73" />
 
 Developed by **KyotoBlazeDev**.
 
@@ -14,11 +16,9 @@ AI-assisted tools were used during development. The developer reviewed and integ
 
 The source project, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
 
-The original story document identifies **TRAINER01 as the training program**, not an aircraft. Lesson aircraft therefore use the story's documented callsigns: **CARGO 90**, **ACADEMY 01**, **EAGLE 21**, and **JET 404**. Sandbox traffic begins with **ACADEMY 02** and continues the ACADEMY numbering. TRAINER01 remains available only as a program or dialogue identity.
-
 ## Plot
 
-You work as an air traffic controller, interpreting the radar picture and responding to aircraft requests. Every scenario is simulated and must not be used for real-world ATC operations.
+In the 1990s, you work as an air traffic controller, interpreting the radar picture and responding to aircraft requests. Every scenario is simulated and must not be used for real-world ATC operations. In 1995, these simulators were iconic but retro for a Windows 95 theme used as an `import tkinter as tk` code theme, rather than `from tkinter import ttk`.
 
 ## Run
 
