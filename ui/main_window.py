@@ -146,7 +146,7 @@ class MainWindow:
         self.status_fields = []
         for width in (18, 7, 12, 17, 24):
             field = tk.Label(bar, width=width, padx=4, pady=3, relief="sunken", bd=1,
-                             anchor="w", font="LtATCFixedFont", bg=CLASSIC_GRAY)
+                             anchor="w", font="TkDefaultFont", bg=CLASSIC_GRAY)
             field.pack(side="left", fill="x", expand=width == 24, padx=(1, 0), pady=1)
             self.status_fields.append(field)
         # Compatibility handle for existing integrations which configure the status text.
