@@ -5,12 +5,6 @@ Any issues and bugs are appreciated. But it's important to read this.
 ## Contributing guide
 *The Code of Conduct are planned*
 
-# Contributing to LtATC
-
-Thank you for your interest in contributing to **LtATC: Python The Game**.
-
-LtATC is a Windows 95–inspired air traffic control training game built with Python and Tkinter. Contributions should preserve its educational purpose, retro presentation, and safety-focused design.
-
 ## Ways to Contribute
 
 You can help by:
