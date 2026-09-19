@@ -25,7 +25,7 @@ class LifecycleTests(unittest.TestCase):
         chapter = game.story_manager.current
         self.assertFalse(game.start_chapter("01"))
         self.assertIs(game.story_manager.current, chapter)
-        self.assertEqual(set(game.simulation.aircraft), {"DAL1943", "AAL106"})
+        self.assertEqual(set(game.simulation.aircraft), {"NWA299", "NWA1482"})
         game.enter_menu()
         self.assertEqual(game.simulation.mode, GameMode.MAIN_MENU)
         self.assertFalse(game.simulation.aircraft)

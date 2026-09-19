@@ -26,6 +26,11 @@ class GameplayTests(unittest.TestCase):
     def test_documented_cases_have_sources_and_complete(self):
         from story.story_manager import CHAPTERS
         for case in CHAPTERS:
+            year = int(case.date_location.split()[2])
+            self.assertGreaterEqual(year, 1990)
+            self.assertLessEqual(year, 1999)
+            self.assertNotIn("2023", case.title)
+            self.assertNotIn("2024", case.title)
             chapter = self.start(case.chapter_id)
             self.assertTrue(chapter.source_url.startswith("https://"))
             self.assertIn("NTSB", chapter.event_indicator)
@@ -42,7 +47,8 @@ class GameplayTests(unittest.TestCase):
 
     def test_case_study_blocks_simulated_clearances(self):
         chapter = self.start("01")
-        plane = self.sim.get_aircraft("DAL1943")
+        plane = self.sim.get_aircraft("NWA299")
+        self.assertIsNotNone(plane)
         self.assertIsNotNone(chapter.validate_clearance(plane, Clearance(C.TAKEOFF), self.sim))
 
     def test_checkpoint_restores_case_decision(self):

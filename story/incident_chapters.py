@@ -77,92 +77,90 @@ class IncidentChapter(StoryChapter):
                 story_state.training_complete = True
 
 
-class JFK2023(IncidentChapter):
+class Detroit1990(IncidentChapter):
     chapter_id = "01"
-    title = "Case 1: JFK Runway Incursion (2023)"
-    source_id = "DCA23LA125"
-    source_url = "https://www.ntsb.gov/investigations/Pages/DCA23LA125.aspx"
-    date_location = "13 Jan 2023 | New York JFK"
-    summary = "AAL106 crossed runway 4L without clearance as DAL1943 began its takeoff roll."
-    introduction = (("Case file", "JFK, 13 January 2023. AAL106 and DAL1943 were involved in a runway incursion. This is a simplified decision study, not a replay."),)
-    evidence = "ASDE-X alerted the tower while AAL106 crossed runway 4L and DAL1943 was departing."
-    decision = "A departure is rolling and another aircraft is crossing its runway. What is the immediate tower response?"
-    choices = (("Cancel takeoff clearance", "cancel"), ("Wait for crossing to finish", "wait"),
-               ("Clear another departure", "depart"))
-    correct_action = "cancel"
-    wrong_feedback = "The runway conflict needs an immediate response. The NTSB says the prompt cancellation reduced the incident's severity."
-    actual_outcome = "The controller cancelled DAL1943's takeoff clearance; its crew rejected the takeoff. No one was injured."
-    lesson = "Surface alerts and prompt action can reduce the severity of a runway incursion."
-    runway_name = "4L"
-    runway_endpoints = (180, 480, 510, 150)
-    traffic = (("DAL1943", 350, 360, 0, AircraftState.LINE_UP),
-               ("AAL106", 250, 315, 0, AircraftState.TAXI))
-
-
-class Austin2023(IncidentChapter):
-    chapter_id = "02"
-    title = "Case 2: Austin in Dense Fog (2023)"
-    source_id = "DCA23FA149"
-    source_url = "https://www.ntsb.gov/investigations/Pages/DCA23FA149.aspx"
-    date_location = "4 Feb 2023 | Austin"
-    summary = "SWA708 departed runway 18L while FDX1432 approached in dense fog."
-    introduction = (("Case file", "Austin, 4 February 2023. SWA708 was departing while FDX1432 approached the same runway in dense fog. This schematic is not to scale."),)
-    evidence = "The tower could not see SWA708 on the runway in dense fog and lacked surface detection equipment."
-    decision = "The departure's position and readiness are uncertain while an arrival closes. Which decision avoids relying on an assumption?"
-    choices = (("Assume departure will clear", "assume"), ("Verify position and separate", "verify"),
-               ("Ignore the arriving flight", "ignore"))
+    title = "Case 1: Detroit in Dense Fog (1990)"
+    source_id = "DCA91MA010"
+    source_url = "https://www.ntsb.gov/investigations/Pages/DCA91MA010.aspx"
+    date_location = "3 Dec 1990 | Detroit"
+    summary = "NWA1482 became disoriented in dense fog and entered the runway used by departing NWA299."
+    introduction = (("Case file", "Detroit, 3 December 1990. NWA1482 and NWA299 collided on the airport surface in dense fog. This is a simplified decision study, not a replay."),)
+    evidence = "The taxiing DC-9's position was uncertain while the Boeing 727 began its takeoff roll. The NTSB identified delayed ATC action and confusing taxi instructions among the contributing factors."
+    decision = "A taxiing aircraft is position-uncertain in dense fog near an active departure runway. What protects the runway?"
+    choices = (("Stop departures and verify position", "verify"), ("Assume the taxi route is clear", "assume"),
+               ("Issue another taxi instruction", "continue"))
     correct_action = "verify"
-    wrong_feedback = "The NTSB identified an incorrect assumption about the departure clearing the runway as the probable cause."
-    actual_outcome = "FDX1432's crew initiated a missed approach after seeing SWA708 through the fog. Both aircraft continued safely."
-    lesson = "In low visibility, verify runway position and maintain separation rather than assuming a departure is clear."
-    runway_name = "18L"
+    wrong_feedback = "Low visibility and positional uncertainty require the runway operation to stop until the aircraft is positively located."
+    actual_outcome = "NWA299 struck NWA1482 during takeoff. Eight people aboard the DC-9 were killed; no one aboard the 727 was injured."
+    lesson = "In low visibility, treat positional uncertainty as a runway hazard and use unambiguous progressive control."
+    runway_name = "3C"
     runway_endpoints = (350, 90, 350, 510)
-    traffic = (("SWA708", 350, 360, 0, AircraftState.LINE_UP),
-               ("FDX1432", 560, 360, 1200, AircraftState.APPROACH))
+    traffic = (("NWA299", 350, 390, 0, AircraftState.LINE_UP),
+               ("NWA1482", 280, 330, 0, AircraftState.TAXI))
 
 
-class Burbank2023(IncidentChapter):
-    chapter_id = "03"
-    title = "Case 3: Burbank Converging Traffic (2023)"
-    source_id = "DCA23LA185"
-    source_url = "https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateNewestReport/106779/pdf"
-    date_location = "22 Feb 2023 | Burbank"
-    summary = "ASH5826 and SKW5326 lost minimum separation during a go-around and departure."
-    introduction = (("Case file", "Burbank, 22 February 2023. ASH5826 approached while SKW5326 departed. Their paths converged during a go-around."),)
-    evidence = "The two aircraft lost minimum separation; both crews received TCAS resolution advisories."
-    decision = "An arrival is going around as a departure climbs into its path. What must guide the immediate response?"
-    choices = (("Treat paths as independent", "independent"), ("Protect both flight paths", "protect"),
-               ("Ignore TCAS advisories", "ignore"))
+class LosAngeles1991(IncidentChapter):
+    chapter_id = "02"
+    title = "Case 2: Los Angeles Runway Collision (1991)"
+    source_id = "DCA91MA018"
+    source_url = "https://www.ntsb.gov/investigations/Pages/DCA91MA018.aspx"
+    date_location = "1 Feb 1991 | Los Angeles"
+    summary = "SKW5569 was holding on runway 24L when USA1493 was cleared to land on the same runway."
+    introduction = (("Case file", "Los Angeles, 1 February 1991. USA1493 landed while SKW5569 was positioned on runway 24L awaiting takeoff. This schematic is not to scale."),)
+    evidence = "The local controller lost awareness of SKW5569 after placing it on the runway and then cleared USA1493 to land."
+    decision = "An aircraft is holding on the landing runway. What must happen before the arrival continues?"
+    choices = (("Clear the arrival to land", "land"), ("Protect the occupied runway", "protect"),
+               ("Wait for the crews to resolve it", "wait"))
     correct_action = "protect"
-    wrong_feedback = "The aircraft were not safely separated. Both crews followed TCAS advisories until clear of conflict."
-    actual_outcome = "Both crews complied with TCAS resolution advisories and cleared the conflict. No injuries were reported."
-    lesson = "A go-around and a departure can create a new airborne conflict; monitor both paths."
-    runway_name = "33"
-    runway_endpoints = (540, 480, 190, 130)
-    traffic = (("ASH5826", 485, 350, 2800, AircraftState.APPROACH),
-               ("SKW5326", 350, 360, 1200, AircraftState.AIRBORNE))
+    wrong_feedback = "A runway cannot be treated as available while another aircraft is still positioned on it."
+    actual_outcome = "USA1493 collided with SKW5569. Both aircraft were destroyed and 34 people were killed."
+    lesson = "Maintain positive awareness of every runway occupant and preserve redundancy during high workload."
+    runway_name = "24L"
+    runway_endpoints = (540, 180, 160, 430)
+    traffic = (("SKW5569", 350, 360, 0, AircraftState.LINE_UP),
+               ("USA1493", 560, 220, 1100, AircraftState.APPROACH))
 
 
-class JFK2024(IncidentChapter):
+class StLouis1994(IncidentChapter):
+    chapter_id = "03"
+    title = "Case 3: St. Louis Wrong Runway (1994)"
+    source_id = "CHI95MA044"
+    source_url = "https://www.ntsb.gov/investigations/Pages/CHI95MA044.aspx"
+    date_location = "22 Nov 1994 | St. Louis"
+    summary = "N441KM entered runway 30R while TWA427 accelerated for takeoff on that runway."
+    introduction = (("Case file", "St. Louis, 22 November 1994. TWA427 and N441KM collided at runway 30R and taxiway Romeo after the Cessna entered the wrong runway."),)
+    evidence = "The Cessna pilot mistakenly believed runway 30R was assigned instead of runway 31, and the incursion was not detected before TWA427 departed."
+    decision = "A surface aircraft appears on a departure runway inconsistent with its clearance. What is the safe response?"
+    choices = (("Continue the departure", "continue"), ("Stop and verify the surface target", "verify"),
+               ("Assume it will hold short", "assume"))
+    correct_action = "verify"
+    wrong_feedback = "A possible wrong-runway entry must be resolved before authorizing or continuing a departure."
+    actual_outcome = "TWA427 struck N441KM during takeoff. Both occupants of the Cessna were killed; eight people aboard the MD-82 received minor injuries."
+    lesson = "Clear phraseology, conspicuous markings, and surface surveillance help expose wrong-runway assumptions."
+    runway_name = "30R"
+    runway_endpoints = (530, 450, 170, 160)
+    traffic = (("TWA427", 390, 340, 0, AircraftState.LINE_UP),
+               ("N441KM", 315, 300, 0, AircraftState.TAXI))
+
+
+class Providence1999(IncidentChapter):
     chapter_id = "04"
-    title = "Case 4: JFK Crossing Traffic (2024)"
-    source_id = "DCA24FA164 (preliminary)"
-    source_url = "https://data.ntsb.gov/carol-repgen/api/Aviation/ReportMain/GenerateNewestReport/194114/pdf"
-    date_location = "17 Apr 2024 | New York JFK"
-    summary = "SWR17K rejected takeoff as four aircraft crossed runway 4L."
-    introduction = (("Case file", "JFK, 17 April 2024. SWR17K began a takeoff attempt while four jets crossed runway 4L. This case uses preliminary NTSB information."),)
-    evidence = "A controller cleared SWR17K for takeoff; another cleared four aircraft to cross the same runway."
-    decision = "Several aircraft are crossing a runway used by a departing flight. What protects the runway?"
-    choices = (("Continue the takeoff", "continue"), ("Stop and resolve the conflict", "stop"),
-               ("Wait for an automated alert", "alert"))
-    correct_action = "stop"
-    wrong_feedback = "The crossing traffic makes the runway conflict immediate. The preliminary report records a rejected takeoff."
-    actual_outcome = "SWR17K's crew rejected the takeoff after seeing crossing traffic. No injuries or damage were reported."
-    lesson = "Runway crossing and departure clearances must be coordinated; do not depend solely on automated alerts."
-    runway_name = "4L"
-    runway_endpoints = (180, 480, 510, 150)
-    traffic = (("SWR17K", 360, 360, 0, AircraftState.LINE_UP),
-               ("DAL29", 285, 320, 0, AircraftState.TAXI),
-               ("DAL420", 310, 305, 0, AircraftState.TAXI),
-               ("RPA5752", 335, 290, 0, AircraftState.TAXI),
-               ("AAL2246", 360, 275, 0, AircraftState.TAXI))
+    title = "Case 4: Providence Surface Confusion (1999)"
+    source_id = "A-00-066 through -071"
+    source_url = "https://www.ntsb.gov/safety/safety-recs/RecLetters/A00_66_71.pdf"
+    date_location = "6 Dec 1999 | Providence"
+    summary = "UAL1448 became disoriented at night in low visibility and reported that it might be on an active runway."
+    introduction = (("Case file", "Providence, 6 December 1999. UAL1448 became disoriented after landing in nighttime instrument conditions. This schematic is not to scale."),)
+    evidence = "UAL1448 deviated from its taxi route and reported that it believed it was on an active runway. FDX1662 departed nearby, and another departure was subsequently cleared."
+    decision = "A crew reports uncertain position and possible runway occupancy. What must happen before another departure?"
+    choices = (("Suspend departures and locate the aircraft", "locate"), ("Continue because the runway looks clear", "continue"),
+               ("Ask the next departure to decide", "delegate"))
+    correct_action = "locate"
+    wrong_feedback = "A crew's report of possible runway occupancy must be resolved before the runway is used again."
+    actual_outcome = "FDX1662 departed near UAL1448. The next departure crew declined its clearance because of the uncertainty; no one was injured and no aircraft was damaged."
+    lesson = "When surface position is uncertain, suspend conflicting movement and positively locate the aircraft."
+    runway_name = "5R"
+    runway_endpoints = (180, 470, 520, 170)
+    traffic = (("UAL1448", 300, 315, 0, AircraftState.TAXI),
+               ("FDX1662", 370, 360, 0, AircraftState.LINE_UP),
+               ("USA2998", 450, 410, 0, AircraftState.HOLDING_SHORT))

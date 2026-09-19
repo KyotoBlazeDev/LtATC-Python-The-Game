@@ -1,7 +1,7 @@
-from story.incident_chapters import JFK2023, Austin2023, Burbank2023, JFK2024
+from story.incident_chapters import Detroit1990, LosAngeles1991, Providence1999, StLouis1994
 from game.constants import GameMode
 
-CHAPTERS = (JFK2023, Austin2023, Burbank2023, JFK2024)
+CHAPTERS = (Detroit1990, LosAngeles1991, StLouis1994, Providence1999)
 
 class StoryManager:
     def __init__(self, state):
