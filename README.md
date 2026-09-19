@@ -6,15 +6,13 @@ LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme
 
 <img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
 
-Developed by **KyotoBlazeDev**.
-
 Release date: **October 7, 2026**.
 
-## AI usage disclaimer
-
-AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
-
-The source project, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
+> [!IMPORTANT]
+> ## AI usage disclaimer
+> AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
+> 
+> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
 
 ## Plot
 
@@ -65,3 +63,6 @@ To try game over, open Sandbox, click **Collision demo**, then **Resume**. The d
 - `assets/`: supplied artwork
 
 `GameState` owns mode transitions, scene restarts, actor creation, and persisted completion progress. Repeated requests for the active lesson or chapter do nothing; Retry explicitly resets that scene. The core simulation is shared across all modes and independent of Tkinter. Aircraft positions in Story Mode are schematic and static; the decision studies are about reading documented risk and choosing a response, not recreating the exact event or training real-world procedures.
+
+## Feedback
+Bugs and pull requests are welcome; the Code of Conduct remains planned. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
