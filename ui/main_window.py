@@ -23,6 +23,10 @@ from ui.story_panel import StoryPanel
 from ui.theme import CLASSIC_GRAY, classic_title_bar, apply_classic_theme
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
+INCIDENT_CONTENT_WARNING = (
+    "These studies discuss real aviation accidents and fatalities. "
+    "They are presented respectfully for safety education, not entertainment."
+)
 
 def load_bedstead(root):
     """Register the bundled font for this process on Windows."""
@@ -558,6 +562,10 @@ class MainWindow:
         tk.Label(panel, text="Four simplified decision studies based on documented NTSB incidents.\n"
                               "Aircraft positions are schematic; each case links to its report.",
                   justify="center", wraplength=500).pack(pady=(0, 12))
+        warning = tk.LabelFrame(panel, text="Content warning", padx=8, pady=6)
+        warning.pack(fill="x", pady=(0, 10))
+        tk.Label(warning, text=INCIDENT_CONTENT_WARNING, justify="left",
+                 wraplength=480, anchor="w").pack(fill="x")
         for chapter in CHAPTERS:
             unlocked = self.story_manager.unlocked(chapter.chapter_id)
             completed = chapter.chapter_id in self.story.chapters_completed

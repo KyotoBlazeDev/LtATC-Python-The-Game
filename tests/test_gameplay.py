@@ -10,6 +10,7 @@ from sandbox.sandbox_manager import SandboxManager
 from story.story_manager import StoryManager
 from story.story_state import StoryState
 from ui.radar_canvas import RadarCanvas
+from ui.main_window import INCIDENT_CONTENT_WARNING
 
 
 class GameplayTests(unittest.TestCase):
@@ -22,6 +23,12 @@ class GameplayTests(unittest.TestCase):
         self.sim.reset(GameMode.STORY)
         self.manager.current = None
         return self.manager.start(chapter_id, self.sim)
+
+    def test_incident_menu_warns_about_real_fatalities_and_educational_context(self):
+        warning = INCIDENT_CONTENT_WARNING.lower()
+        self.assertIn("real aviation accidents and fatalities", warning)
+        self.assertIn("safety education", warning)
+        self.assertIn("not entertainment", warning)
 
     def test_documented_cases_have_sources_and_complete(self):
         from story.story_manager import CHAPTERS
