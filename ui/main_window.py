@@ -137,6 +137,9 @@ class MainWindow:
         self.root.bind("<Control-m>", lambda _event: self.show_menu(), add="+")
         self.root.bind("<KeyPress-p>", self._pause_shortcut, add="+")
         self.root.bind("<KeyPress-r>", self._resume_shortcut, add="+")
+        self.root.bind("<Alt-s>", lambda _event: self.show_story_menu(), add="+")
+        self.root.bind("<Alt-l>", lambda _event: self.show_lesson_menu(), add="+")
+        self.root.bind("<Alt-b>", lambda _event: self.start_sandbox(), add="+")
 
     def _build_status_bar(self):
         bar = tk.Frame(self.root, bd=1, relief="raised", bg="#c0c0c0")
@@ -513,9 +516,6 @@ class MainWindow:
             menu_buttons.append(button)
         # Tk draws the classic dotted focus rectangle when these buttons own focus.
         menu_buttons[0].focus_set()
-        self.root.bind("<Alt-s>", lambda _event: self.show_story_menu(), add="+")
-        self.root.bind("<Alt-l>", lambda _event: self.show_lesson_menu(), add="+")
-        self.root.bind("<Alt-b>", lambda _event: self.start_sandbox(), add="+")
         tk.Label(panel, text="REAL TRAFFIC.  REAL DECISIONS.  A BRIGHTER TOMORROW.",
                  fg="#75b8ff", bg="#000000", font=("Fixedsys", 11)).pack(pady=(16, 4))
         tk.Label(panel, text="CONFIDENCE != CORRECTNESS", fg="#b8c8c0", bg="#000000",
