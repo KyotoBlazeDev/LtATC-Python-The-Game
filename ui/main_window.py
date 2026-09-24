@@ -1005,10 +1005,11 @@ class MainWindow:
         dt = min(now - self.last_tick, .2)
         self.last_tick = now
         if self.simulation.mode != GameMode.MAIN_MENU:
-            # Query Tk directly: focus_get() cannot resolve some native popups
-            # (such as option menus) to Python widget objects. An empty
-            # focus path means this application no longer has keyboard focus.
-            if not self.root.tk.call("focus"):
+            # Tk can retain a focus path after withdraw/iconify. Check the
+            # window state as well as focus before advancing the simulation.
+            # Query Tk directly because focus_get() cannot resolve some
+            # native popups (such as option menus) to Python widgets.
+            if self.root.state() in ("withdrawn", "iconic") or not self.root.tk.call("focus"):
                 self.simulation.pause()
                 self.refresh()
                 self._schedule_tick()
