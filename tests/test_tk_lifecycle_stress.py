@@ -75,6 +75,66 @@ class TkLifecycleStressTests(unittest.TestCase):
         self.assertEqual(len(root.tk.call("after", "info")), 1)
         root.destroy()
 
+    def test_focus_loss_pauses_and_restore_does_not_resume(self):
+        root, window = self.make_window()
+        try:
+            window.simulation.resume()
+            root.withdraw()
+            window.tick()
+            self.assertTrue(window.simulation.paused)
+            self.assertEqual(len(root.tk.call("after", "info")), 1)
+            root.deiconify()
+            root.update()
+            self.assertTrue(window.simulation.paused)
+        finally:
+            self.close_window(root)
+
+    def test_footer_boundaries_and_dos_focus_survive_view_switch(self):
+        root, window = self.make_window()
+        try:
+            window._set_display_mode("teletext")
+            root.update_idletasks()
+            width, height = window.radar.winfo_width(), window.radar.winfo_height()
+            for index in range(4):
+                for x in (int(width * index / 4), min(width - 1, int(width * (index + 1) / 4) - 1)):
+                    window.radar._click(type("Click", (), {"x": x, "y": height - 1})())
+                    self.assertEqual(window.radar.teletext_page, 100 + index)
+            window._set_display_mode("dos")
+            window.dos_entry.focus_set()
+            window.dos_entry.insert(0, "STATUS")
+            window._show_radar_display()
+            window.show_menu()
+            window.start_sandbox()
+            window._select_teletext_page(103)
+            self.assertEqual(window.radar.teletext_page, 103)
+        finally:
+            self.close_window(root)
+
+    def test_status_color_covers_active_paused_warning_and_critical(self):
+        root, window = self.make_window()
+        try:
+            class Conflict:
+                def __init__(self, critical):
+                    self.critical = critical
+                    self.first = "ACADEMY 02"
+                    self.second = "OTHER"
+
+            states = []
+            window.simulation.resume()
+            window.refresh([])
+            states.append(window.status_fields[-1].cget("text"))
+            window.simulation.pause()
+            window.refresh([])
+            states.append(window.status_fields[-1].cget("text"))
+            window.refresh([Conflict(False)])
+            states.append(window.status_fields[-1].cget("text"))
+            window.refresh([Conflict(True)])
+            states.append(window.status_fields[-1].cget("text"))
+            self.assertEqual(states, ["ACTIVE", "PAUSED", "WARNING", "CRITICAL"])
+            self.assertNotEqual(window.status_fields[-1].cget("bg"), window.status_fields[0].cget("bg"))
+        finally:
+            self.close_window(root)
+
 
 if __name__ == "__main__":
     unittest.main()

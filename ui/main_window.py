@@ -75,7 +75,18 @@ class MainWindow:
         root.bind("<KeyPress>", self._select_aircraft_with_key, add="+")
         root.bind("<MouseWheel>", self._scroll_sidebar, add="+")
         self.show_startup()
-        root.after(33, self.tick)
+        self.tick_job = None
+        root.bind("<Destroy>", self._on_root_destroy, add="+")
+        self._schedule_tick()
+
+    def _schedule_tick(self):
+        if getattr(self, "tick_job", None) is None and self.root.winfo_exists():
+            self.tick_job = self.root.after(33, self.tick)
+
+    def _on_root_destroy(self, event):
+        if event.widget is self.root and self.tick_job is not None:
+            self.root.after_cancel(self.tick_job)
+            self.tick_job = None
 
     def _build_menu_bar(self):
         """Create the application command surface using native classic menus."""
@@ -985,6 +996,11 @@ class MainWindow:
                 self.dialogue.show(speaker, message)
 
     def tick(self):
+        if getattr(self, "tick_job", None) is not None:
+            self.root.after_cancel(self.tick_job)
+        self.tick_job = None
+        if not self.root.winfo_exists():
+            return
         now = time.monotonic()
         dt = min(now - self.last_tick, .2)
         self.last_tick = now
@@ -995,12 +1011,12 @@ class MainWindow:
             if not self.root.tk.call("focus"):
                 self.simulation.pause()
                 self.refresh()
-                self.root.after(33, self.tick)
+                self._schedule_tick()
                 return
             self.simulation.update(dt)
             if self.simulation.game_over:
                 self.refresh()
-                self.root.after(33, self.tick)
+                self._schedule_tick()
                 return
             conflicts = self.simulation.safety.conflicts(list(self.simulation.aircraft.values()))
             if not any(conflict.critical for conflict in conflicts):
@@ -1014,24 +1030,32 @@ class MainWindow:
                     self.simulation.pause()
                     self.boundary_shown = True
                     self.story.safety_interventions += 1
-                    choice = messagebox.askyesnocancel("Training safety boundary", "TRAINING SAFETY BOUNDARY ACTIVATED\n\nInspect the situation?\nYes: inspect while paused\nNo: retry checkpoint\nCancel: return to story menu")
+                    choice = messagebox.askyesnocancel("Training safety boundary", "TRAINING SAFETY BOUNDARY ACTIVATED\n\nInspect the situation?\nYes: inspect while paused\nNo: retry checkpoint\nCancel: return to story menu", parent=self.root)
+                    if not self.root.winfo_exists():
+                        return
+                    if self.story_manager.current is not chapter or self.simulation.mode != GameMode.STORY:
+                        self._schedule_tick()
+                        return
                     if choice is False:
                         self.retry_story_checkpoint()
                     elif choice is None:
                         self.show_story_menu()
-                        self.root.after(33, self.tick)
+                        self._schedule_tick()
                         return
                 if chapter.check_completion() and not self.reported:
                     self.reported = True
                     self.simulation.pause()
                     if not self.game.complete_chapter(chapter.chapter_id):
-                        show_warning("Chapter progress could not be saved. Check that the progress folder is writable, then retry the chapter.")
-                        self.root.after(33, self.tick)
+                        show_warning("Chapter progress could not be saved. Check that the progress folder is writable, then retry the chapter.", parent=self.root)
+                        self._schedule_tick()
                         return
                     reactions = "\n".join(f"{speaker}: {message}" for speaker, message in chapter.drain_messages())
                     ending = "Story Mode complete." if chapter.chapter_id == "04" else "The next chapter is unlocked."
-                    messagebox.showinfo("Chapter complete", f"{chapter.title}\n\n{chapter.event_indicator or 'Objective complete'}\n\n{reactions}\n\n{ending}")
-                    self.show_story_menu()
+                    messagebox.showinfo("Chapter complete", f"{chapter.title}\n\n{chapter.event_indicator or 'Objective complete'}\n\n{reactions}\n\n{ending}", parent=self.root)
+                    if not self.root.winfo_exists():
+                        return
+                    if self.story_manager.current is chapter and self.simulation.mode == GameMode.STORY:
+                        self.show_story_menu()
                 else:
                     self._drain_story_messages()
             if lesson and not self.reported:
@@ -1041,10 +1065,15 @@ class MainWindow:
                     self.simulation.metrics.instructor_interventions += 1
                     self.story.safety_interventions += 1
                     pair = conflicts[0]
-                    retry = messagebox.askretrycancel("Training safety boundary", f"{pair.first} and {pair.second} would lose separation.\nSimulation paused.\n\nRetry from the safe checkpoint?")
+                    retry = messagebox.askretrycancel("Training safety boundary", f"{pair.first} and {pair.second} would lose separation.\nSimulation paused.\n\nRetry from the safe checkpoint?", parent=self.root)
+                    if not self.root.winfo_exists():
+                        return
+                    if self.lessons.current is not lesson or self.simulation.mode != GameMode.LESSON:
+                        self._schedule_tick()
+                        return
                     if retry:
                         self.start_lesson(lesson.lesson_id, restart=True)
-                        self.root.after(33, self.tick)
+                        self._schedule_tick()
                         return
                     else:
                         self.dialogue.show("Blaze", "Inspect the aircraft, then use Retry when ready.")
@@ -1053,22 +1082,38 @@ class MainWindow:
                     self.reported = True
                     self.simulation.pause()
                     if not self.game.complete_lesson(lesson.lesson_id):
-                        show_warning("Lesson progress could not be saved. Check that the progress folder is writable, then retry the lesson.")
-                        self.root.after(33, self.tick)
+                        show_warning("Lesson progress could not be saved. Check that the progress folder is writable, then retry the lesson.", parent=self.root)
+                        self._schedule_tick()
                         return
-                    show_report(lesson, self.simulation.metrics, self.player_name)
-                    self.show_lesson_menu()
+                    show_report(lesson, self.simulation.metrics, self.player_name, parent=self.root)
+                    if not self.root.winfo_exists():
+                        return
+                    if self.lessons.current is lesson and self.simulation.mode == GameMode.LESSON:
+                        self.show_lesson_menu()
             if self.simulation.mode != GameMode.MAIN_MENU:
                 self.refresh(conflicts if self.simulation.separation_warnings else [])
-        self.root.after(33, self.tick)
+        self._schedule_tick()
 
     def refresh(self, conflicts=None):
         mode = self.simulation.mode
         selected = self.simulation.get_aircraft(self.simulation.selected_callsign)
         player = f"{self.player_name} | " if mode in {GameMode.LESSON, GameMode.SANDBOX} else ""
         mode_text = f"{player}{mode.name}" if player else mode.name
-        conflict_text = "GAME OVER" if self.simulation.game_over else "PAUSED" if self.simulation.paused else "NO CONFLICT"
-        selection_text = f"{self.simulation.selected_callsign} SELECTED" if self.simulation.selected_callsign else conflict_text
+        current_conflicts = conflicts if conflicts is not None else self.simulation.safety.conflicts(list(self.simulation.aircraft.values()))
+        if mode == GameMode.MAIN_MENU:
+            state_text, state_bg, state_fg = "MENU", CLASSIC_GRAY, "#000000"
+        elif self.simulation.game_over:
+            state_text, state_bg, state_fg = "GAME OVER", "#a00000", "#ffffff"
+        elif any(item.critical for item in current_conflicts):
+            state_text, state_bg, state_fg = "CRITICAL", "#a00000", "#ffffff"
+        elif current_conflicts:
+            state_text, state_bg, state_fg = "WARNING", "#fff2a8", "#000000"
+        elif self.simulation.paused:
+            state_text, state_bg, state_fg = "PAUSED", "#fff2a8", "#000000"
+        else:
+            state_text, state_bg, state_fg = "ACTIVE", "#d7f2dc", "#003b17"
+        self.status_fields[-1].configure(bg=state_bg, fg=state_fg)
+        selection_text = state_text
         self._set_status(mode_text, f"{self.simulation.speed:.1f}x",
                          f"SAFETY {'ON' if self.simulation.training_safety else 'OFF'}",
                          f"AIRCRAFT {len(self.simulation.aircraft):02d}/{AIRCRAFT_LIMIT:02d}", selection_text)
