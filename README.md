@@ -6,7 +6,7 @@ LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme
 
 <img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
 
-Release date: ~~**October 7, 2026**~~. Sorry for the inconvenience; I had to delay it to **December 20, 2026** because it was complex and was pushed back from the original date.
+Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
 
 > [!IMPORTANT]
 > ## AI usage disclaimer
