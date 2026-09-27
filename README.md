@@ -2,11 +2,11 @@
 
 <img width="1099" height="278" alt="LtATC_Python_The_Game_logo" src="https://github.com/user-attachments/assets/d94e3394-95b7-4bab-95a0-95dcecce6ee5" />
 
-LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, they turned into a Windows 95-style era ahead of the 1990s. It is not intended for real-world air traffic control training or operational use.
+LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, and it captures a Windows 95-era feel. It is not intended for real-world air traffic control training or operational use.
 
 <img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
 
-Release date: **October 7, 2026**.
+Release date: ~~**October 7, 2026**~~. Sorry for the inconvenience; I had to delay it to **December 20, 2026** because it was complex and was pushed back from the original date.
 
 > [!IMPORTANT]
 > ## AI usage disclaimer
