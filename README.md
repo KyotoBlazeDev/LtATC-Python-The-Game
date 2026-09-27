@@ -12,7 +12,11 @@ Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2
 > ## AI usage disclaimer
 > AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
 > 
-> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions. Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
+> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions, developed on September 11, 2026, under a private development build project, it may be public on the X posts (BlazeGamerzz, known as BlazeLegacy774) with a reference image.
+>
+> <img width="1920" height="1080" alt="Cuplikan layar 2026-09-11 212616" src="https://github.com/user-attachments/assets/1b816859-cb04-4b91-ac6e-3c2d83052faa" />
+> 
+> Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
 
 ## Plot
 
