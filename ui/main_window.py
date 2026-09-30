@@ -274,7 +274,13 @@ class MainWindow:
             if target is not None:
                 target.focus_set()
             return "break"
-        if event.state & 0x000C:
+        if event.state & 0x0004:
+            return
+        # On Windows, Num Lock can set the Mod1 bit used by Tk for Alt.
+        # Check the actual Alt key before discarding a digit shortcut.
+        if event.state & 0x0008 and (
+            sys.platform != "win32" or ctypes.windll.user32.GetKeyState(0x12) & 0x8000
+        ):
             return
         if isinstance(event.widget, (tk.Entry, tk.Text, tk.Spinbox)):
             return
@@ -284,15 +290,24 @@ class MainWindow:
         callsigns = tuple(self.simulation.aircraft)
         if not callsigns:
             return
+        digit = key if key in "0123456789" and len(key) == 1 else getattr(event, "char", "")
+        # Windows virtual-key codes 0x30–0x39 identify the physical top row,
+        # even when Num Lock makes Tk report an unexpected keysym/character.
+        if not (digit in "0123456789" and len(digit) == 1):
+            keycode = getattr(event, "keycode", None)
+            if isinstance(keycode, int) and 0x30 <= keycode <= 0x39:
+                digit = chr(keycode)
+        if digit not in "0123456789" or len(digit) != 1:
+            digit = None
         if key in {"Tab", "ISO_Left_Tab"}:
             current = self.simulation.selected_callsign
             backwards = key == "ISO_Left_Tab" or bool(event.state & 0x0001)
             index = callsigns.index(current) if current in callsigns else (0 if backwards else -1)
             step = -1 if backwards else 1
             self.select_aircraft(callsigns[(index + step) % len(callsigns)])
-        elif key in {str(i) for i in range(1, 10)} and int(key) <= len(callsigns):
-            self.select_aircraft(callsigns[int(key) - 1])
-        elif key == "0":
+        elif digit in {str(i) for i in range(1, 10)} and int(digit) <= len(callsigns):
+            self.select_aircraft(callsigns[int(digit) - 1])
+        elif digit == "0":
             self.select_aircraft(None)
         else:
             return
