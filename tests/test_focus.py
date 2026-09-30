@@ -62,14 +62,18 @@ class FocusTests(unittest.TestCase):
         window.tick()
         self.assertFalse(window.simulation.paused)
 
-    def test_digit_shortcut_uses_typed_character_when_num_lock_changes_keysym(self):
+    def test_top_row_digit_shortcut_with_num_lock_mod1_state(self):
         window = self.make_window(GameMode.SANDBOX)
         window.simulation.aircraft = {"ONE": Mock(), "TWO": Mock()}
         window.select_aircraft = Mock()
         event = SimpleNamespace(keysym="KP_2", char="", keycode=0x32,
                                 state=0x0008, widget=Mock())
 
-        with patch("ui.main_window.ctypes.windll.user32.GetKeyState", return_value=0):
+        windows_sys = SimpleNamespace(platform="win32")
+        windows_ctypes = SimpleNamespace(
+            windll=SimpleNamespace(user32=SimpleNamespace(GetKeyState=Mock(return_value=0)))
+        )
+        with patch("ui.main_window.sys", windows_sys), patch("ui.main_window.ctypes", windows_ctypes):
             self.assertEqual(window._select_aircraft_with_key(event), "break")
         window.select_aircraft.assert_called_once_with("TWO")
 
