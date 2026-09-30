@@ -122,7 +122,7 @@ class MainWindow:
         simulation.add_separator()
         simulation.add_command(label="Reset Scenario", command=self._reset_active_scenario)
         simulation.add_command(label="Collision Demonstration", command=self._start_collision_demo)
-        menu_bar.add_cascade(label="Simulation", menu=simulation, underline=0)
+        menu_bar.add_cascade(label="Simulation", menu=simulation, underline=1)
         self.simulation_menu = simulation
 
         view = tk.Menu(menu_bar, tearoff=False)
@@ -246,7 +246,7 @@ class MainWindow:
             return False
 
     def _show_keyboard_help(self):
-        messagebox.showinfo("LtATC Keyboard Controls", "Alt+F/C/S/V/H  Open application menus\nAlt+S/L/B  Start Story, Lesson, or Sandbox\nTab / Shift+Tab  Select aircraft\n1–9  Select aircraft directly\n0  Clear selection\nDelete  Remove selected sandbox aircraft\nP / R  Pause or resume", parent=self.root)
+        messagebox.showinfo("LtATC Keyboard Controls", "Alt+F/C/I/V/H  Open application menus\nAlt+S/L/B  Start Story, Lesson, or Sandbox\nTab / Shift+Tab  Select aircraft\n1–9  Select aircraft directly\n0  Clear selection\nDelete  Remove selected sandbox aircraft\nP / R  Pause or resume", parent=self.root)
 
     def _show_about(self):
         messagebox.showinfo(
@@ -289,6 +289,8 @@ class MainWindow:
             return "break"
         callsigns = tuple(self.simulation.aircraft)
         if not callsigns:
+            if key in {"Tab", "ISO_Left_Tab"}:
+                return "break"
             return
         digit = key if key in "0123456789" and len(key) == 1 else getattr(event, "char", "")
         # Windows virtual-key codes 0x30–0x39 identify the physical top row,

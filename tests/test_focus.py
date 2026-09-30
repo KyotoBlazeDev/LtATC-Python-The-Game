@@ -77,6 +77,27 @@ class FocusTests(unittest.TestCase):
             self.assertEqual(window._select_aircraft_with_key(event), "break")
         window.select_aircraft.assert_called_once_with("TWO")
 
+    def test_tab_does_not_move_focus_when_there_are_no_aircraft(self):
+        window = self.make_window(GameMode.SANDBOX)
+        window.select_aircraft = Mock()
+        event = SimpleNamespace(keysym="Tab", char="", keycode=9,
+                                state=0, widget=Mock())
+
+        self.assertEqual(window._select_aircraft_with_key(event), "break")
+        window.select_aircraft.assert_not_called()
+
+    def test_story_shortcut_does_not_share_simulation_menu_mnemonic(self):
+        import tkinter as tk
+        root = tk.Tk()
+        try:
+            with patch("ui.main_window.default_progress_path", return_value=None):
+                window = MainWindow(root)
+            self.assertEqual(window.menu_bar.entrycget(2, "label"), "Simulation")
+            self.assertEqual(window.menu_bar.entrycget(2, "underline"), 1)
+            self.assertTrue(root.bind("<Alt-s>"))
+        finally:
+            root.destroy()
+
     def test_display_commands_ignore_destroyed_game_screen_from_main_menu(self):
         window = self.make_window(GameMode.MAIN_MENU)
         window.radar = Mock()
