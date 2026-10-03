@@ -73,6 +73,7 @@ class DeleteAircraftTests(unittest.TestCase):
         window.game = GameState()
         window.game.start_sandbox()
         window.simulation = window.game.simulation
+        window.sandbox = window.game.sandbox
         window.simulation.select("ACADEMY 02")
         window.root = Mock()
         window.refresh = Mock()

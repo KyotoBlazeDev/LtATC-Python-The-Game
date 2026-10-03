@@ -1,9 +1,10 @@
 from lessons.lesson_01_departure import DepartureLesson
 from lessons.lesson_02_heading import HeadingLesson
 from lessons.lesson_03_separation import SeparationLesson
+from lessons.lesson_04_arrival import ArrivalLesson
 from game.constants import GameMode
 
-LESSONS = (DepartureLesson, HeadingLesson, SeparationLesson)
+LESSONS = (DepartureLesson, HeadingLesson, SeparationLesson, ArrivalLesson)
 
 class LessonManager:
     def __init__(self) -> None:

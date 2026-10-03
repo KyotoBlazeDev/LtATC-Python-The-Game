@@ -31,7 +31,21 @@ python main.py
 ```
 
 ## Gameplay / How to use
-The Tkinter window opens at the main menu. Story Mode offers four case studies; Lesson Mode offers three separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
+The Tkinter window opens at the main menu. Story Mode offers four case studies; Lesson Mode offers four separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
+
+Lesson 4 guides ARRIVAL 04 through approach, a practice go-around, a second approach, a runway check, and landing. Follow the current objective in the lesson panel; completion requires the aircraft to stop and release the runway.
+
+Sandbox **Traffic rate** now generates airborne traffic automatically: Low every 20 simulation seconds, Medium every 10, and High every 5. Manual disables automatic generation. Traffic enters at radar edges only when a position avoids predicted conflicts; a blocked attempt is skipped until the next interval. Generation respects pause, simulation speed, game over, and the 30-aircraft limit. Changing the rate restarts its interval. Weather and time settings remain labels.
+
+The graphical radar shows a short aircraft trail and a yellow dashed **8-second target-direction preview** for the selected airborne aircraft. The preview uses target heading and speed, so it is a simplified projection rather than the actual curved turning path. Trails clear when traffic is removed or a scenario restarts.
+
+Use the **Sandbox** menu for these activities:
+
+- **Start three-minute shift** starts fresh traffic and increases the rate from Low to Medium to High each minute. Guide aircraft out of the sector or land them while maintaining separation. Manual spawning and removal are disabled during a shift. The report awards 100 points per aircraft handled plus one point per second without a current separation warning. Paused time does not count. Completion or collision freezes the shift; start another shift or use Simulation → Reset Scenario for regular Sandbox.
+- **Trigger emergency** alternates a priority landing request and a 15-second runway inspection closure. The **Emergencies** checkbox attempts an event every 30 simulation seconds. Priority aircraft show red markers and a PRIORITY label in graphical radar, or `!` in character displays. Land the priority aircraft to resolve its request. A closure blocks landing clearances, shows CLOSED on radar, and reopens automatically; all event timers stop while paused. Events remain pending when traffic or runway conditions prevent them.
+- **Save scenario / Load scenario** use portable JSON files containing aircraft, runway status, traffic and environment settings, speed, safety thresholds, and selected aircraft. Loading validates the whole file before replacing the scene and always pauses it. A bad file leaves the current scene intact. Saves are for regular Sandbox sessions; active or completed shifts and collision scenes cannot be saved. Progress and shift scores are separate from scenario files. Generation and emergency scheduling restart after loading; an active inspection closure retains its remaining duration.
+
+Aircraft leaving the radar sector are removed automatically in Sandbox so continuous traffic does not fill the aircraft limit with invisible targets.
 
 Enter a controller name on the main menu (or lesson menu) to use it in Lesson and Sandbox dialogue, the status bar, and lesson reports. Leave it blank to use **Controller**. The name is kept only while the app is open and does not change Story Mode's source-labeled case files. Lesson and Story completion is saved locally between sessions; use **Reset progress** on the main menu to clear it.
 
@@ -60,7 +74,7 @@ Startup airport photograph by [Johannes Heel](https://unsplash.com/id/@j_heel?ut
 To try game over, open Sandbox, click **Collision demo**, then **Resume**. The demo replaces current traffic, switches training safety off, and sets two aircraft on a head-on course at 3,000 ft. Impact occurs after about four seconds at 1x speed. Turning training safety back on pauses them before collision. With safety off, heading and altitude commands may create predicted conflicts; numeric limits, aircraft-state checks, and runway availability checks still apply.
 
 - `game/`: central `GameState` lifecycle, aircraft motion, clearances, runway, simulation, and safety rules
-- `lessons/`: three reusable guided lessons
+- `lessons/`: four reusable guided lessons
 - `sandbox/`: free-play aircraft generation
 - `story/`: characters, dialogue queue, four chapters, checkpoints, and in-memory progress
 - `ui/`: Tkinter panels and radar presentation

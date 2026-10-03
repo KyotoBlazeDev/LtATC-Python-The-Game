@@ -10,6 +10,6 @@ class AircraftPanel(tk.LabelFrame):
         if plane is None:
             self.label.configure(text="Select an aircraft on radar")
         else:
-            self.label.configure(text=f"{plane.callsign}  |  {plane.state.name.replace('_', ' ')}\n"
+            self.label.configure(text=f"{plane.callsign}{' PRIORITY' if plane.emergency else ''}  |  {plane.state.name.replace('_', ' ')}\n"
                                       f"ALT {plane.altitude:5d} ft    HDG {round(plane.heading):03d}°\n"
                                       f"SPD {round(plane.speed):3d} kt    TARGET {round(plane.target_heading):03d}°")

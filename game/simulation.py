@@ -1,6 +1,7 @@
 import logging
 from math import isfinite
 from dataclasses import dataclass
+from collections import deque
 from game.aircraft import Aircraft, AircraftState
 from game.clearances import Clearance, ClearanceType
 from game.constants import AIRCRAFT_LIMIT, GameMode
@@ -29,6 +30,9 @@ class Simulation:
         self.metrics = Metrics()
         self.selected_callsign: str | None = None
         self.collision = None
+        self.session_finished = False
+        self.trails = {}
+        self._trail_elapsed = 0.0
 
     @property
     def game_over(self):
@@ -46,17 +50,22 @@ class Simulation:
         self.metrics = Metrics()
         self.selected_callsign = None
         self.collision = None
+        self.session_finished = False
+        self.trails.clear()
+        self._trail_elapsed = 0.0
 
     def spawn_aircraft(self, aircraft: Aircraft) -> bool:
-        if self.game_over or len(self.aircraft) >= AIRCRAFT_LIMIT or aircraft.callsign in self.aircraft:
+        if self.game_over or self.session_finished or len(self.aircraft) >= AIRCRAFT_LIMIT or aircraft.callsign in self.aircraft:
             return False
         self.aircraft[aircraft.callsign] = aircraft
+        self.trails[aircraft.callsign] = deque([(aircraft.x, aircraft.y)], maxlen=20)
         return True
 
     def remove_aircraft(self, callsign: str) -> None:
-        if self.game_over:
+        if self.game_over or self.session_finished:
             return
         self.aircraft.pop(callsign, None)
+        self.trails.pop(callsign, None)
         if self.selected_callsign == callsign:
             self.select(None)
         if self.runway.occupied_by == callsign:
@@ -74,7 +83,7 @@ class Simulation:
         self.paused = True
 
     def resume(self) -> None:
-        if not self.game_over:
+        if not self.game_over and not self.session_finished:
             self.paused = False
 
     def set_speed(self, multiplier: float) -> None:
@@ -85,7 +94,7 @@ class Simulation:
         self.speed = float(multiplier)
 
     def update(self, dt: float) -> None:
-        if self.paused or self.game_over:
+        if self.paused or self.game_over or self.session_finished:
             return
         if isinstance(dt, bool) or not isinstance(dt, (int, float)) or not isfinite(dt) or dt < 0:
             raise ValueError("Simulation time step must be a finite, nonnegative number.")
@@ -117,8 +126,15 @@ class Simulation:
             occupant = self.get_aircraft(self.runway.occupied_by)
             if occupant is None or not occupant.on_runway:
                 self.runway.occupied_by = None
+        self._trail_elapsed += min(dt * self.speed, .2)
+        if self._trail_elapsed >= .5:
+            self._trail_elapsed = 0.0
+            for plane in self.aircraft.values():
+                self.trails.setdefault(plane.callsign, deque(maxlen=20)).append((plane.x, plane.y))
 
     def transmit(self, callsign: str, clearance: Clearance) -> ValidationResult:
+        if self.session_finished:
+            return ValidationResult(False, "WARNING", "Shift complete. Start a new shift or Retry.")
         if self.game_over:
             return ValidationResult(False, "WARNING", "Game over. Retry or return to the main menu.")
         plane = self.get_aircraft(callsign)

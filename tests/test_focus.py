@@ -15,6 +15,7 @@ class FocusTests(unittest.TestCase):
         window.root.tk.call.return_value = ""
         window.game = GameState()
         window.simulation = window.game.simulation
+        window.sandbox = window.game.sandbox
         window.simulation.reset(mode)
         window.lessons = Mock(current=None)
         window.story_manager = Mock(current=None)

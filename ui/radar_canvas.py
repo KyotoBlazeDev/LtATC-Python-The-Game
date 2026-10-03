@@ -91,14 +91,23 @@ class RadarCanvas(tk.Canvas):
         end_x, end_y = screen(r.end_x, r.end_y)
         self.create_line(start_x, start_y, end_x, end_y, fill="#c9d0cb", width=13)
         self.create_line(start_x, start_y, end_x, end_y, fill="#333d3e", width=9)
-        self.create_text(end_x-8, end_y-20, text=f"RWY {r.name}", fill="#e9f0d2", anchor="e")
+        self.create_text(end_x-8, end_y-20, text=f"RWY {r.name}{' CLOSED' if r.closed else ''}",
+                         fill="#ff9020" if r.closed else "#e9f0d2", anchor="e")
         self.positions = {}
         conflicted = {name for item in conflicts for name in (item.first, item.second)}
         critical = {name for item in conflicts if item.critical for name in (item.first, item.second)}
         for index, plane in enumerate(simulation.aircraft.values(), 1):
             x, y = screen(plane.x, plane.y)
+            trail = simulation.trails.get(plane.callsign, ())
+            if len(trail) > 1:
+                self.create_line(*(coordinate for point in trail for coordinate in screen(*point)),
+                                 fill="#427566", tags="trail")
+            if plane.selected and plane.altitude > 0:
+                target_x, target_y = screen(*plane.predicted_position(8))
+                self.create_line(x, y, target_x, target_y, fill="#fff3a4", dash=(4, 3),
+                                 arrow="last", tags="heading_preview")
             self.positions[plane.callsign] = (x, y)
-            color = ("#ff202b" if plane.callsign in critical else
+            color = ("#ff202b" if plane.callsign in critical or plane.emergency else
                      "#fff200" if plane.callsign in conflicted else "#82e9ca")
             if plane.callsign in critical:
                 frame = self.separation_critical_frame
@@ -120,7 +129,7 @@ class RadarCanvas(tk.Canvas):
                 self.create_oval(x-5, y-5, x+5, y+5, fill=color)
             label_x, anchor = (x-12, "se") if x > width-140 else (x+12, "sw")
             number = f"{index}. " if index <= 9 else ""
-            self.create_text(label_x, y-12, text=f"{number}{plane.callsign}\n{plane.altitude} ft  {round(plane.heading):03d}°",
+            self.create_text(label_x, y-12, text=f"{number}{plane.callsign}{' PRIORITY' if plane.emergency else ''}\n{plane.altitude} ft  {round(plane.heading):03d}°",
                              fill=color, anchor=anchor, font=("Fixedsys", 9, "bold"))
         selected = simulation.get_aircraft(simulation.selected_callsign)
         if selected is not None:
@@ -219,14 +228,14 @@ class RadarCanvas(tk.Canvas):
             y = runway.start_y + (runway.end_y - runway.start_y) * step / 20
             col, row = grid(x, y)
             put(col, row, "\u2588", yellow)
-        put(2, 18, "RWY " + runway.name, yellow)
+        put(2, 18, "RWY " + runway.name + (" CLOSED" if runway.closed else ""), red if runway.closed else yellow)
 
         self.positions = {}
         conflicted = {name for item in conflicts for name in (item.first, item.second)}
         for index, plane in enumerate(simulation.aircraft.values(), 1):
             col, row = grid(plane.x, plane.y)
-            color = red if plane.callsign in conflicted else yellow if plane.selected else green
-            put(col, row, "X" if plane.callsign in conflicted else "\u25a0" if plane.selected else "\u25cf", color)
+            color = red if plane.emergency or plane.callsign in conflicted else yellow if plane.selected else green
+            put(col, row, "!" if plane.emergency else "X" if plane.callsign in conflicted else "\u25a0" if plane.selected else "\u25cf", color)
             self.positions[plane.callsign] = ((col + .5) * cell_w, (row + .5) * cell_h)
             if index <= 4:
                 put(1, 19 + index,
@@ -250,8 +259,8 @@ class RadarCanvas(tk.Canvas):
             for index, plane in enumerate(simulation.aircraft.values(), 1):
                 column = 1 if index <= 16 else 21
                 row = 4 + index if index <= 16 else index - 12
-                color = yellow if plane.selected else green
-                put(column, row, f"{index:02d} {plane.callsign[:10]:10} {plane.altitude:5}", color)
+                color = red if plane.emergency else yellow if plane.selected else green
+                put(column, row, f"{'!' if plane.emergency else ' '}{index:02d} {plane.callsign[:9]:9} {plane.altitude:5}", color)
             if not simulation.aircraft:
                 put(1, 6, "NO AIRCRAFT IN CONTROL AREA", green)
             put(1, 22, "@ SELECTED   X SEPARATION WARNING", yellow)
@@ -259,6 +268,7 @@ class RadarCanvas(tk.Canvas):
             runway = simulation.runway
             put(1, 3, "RUNWAY STATUS", yellow)
             put(1, 5, f"RUNWAY         {runway.name}", white)
+            put(1, 6, f"AVAILABILITY   {'CLOSED' if runway.closed else 'OPEN'}", red if runway.closed else green)
             put(1, 7, f"OCCUPANCY      {runway.occupied_by or 'CLEAR'}", green if not runway.occupied_by else red)
             put(1, 9, "-------------------------------", cyan)
             selected = simulation.get_aircraft(simulation.selected_callsign)
@@ -337,8 +347,8 @@ class RadarCanvas(tk.Canvas):
         conflicted = {name for item in conflicts for name in (item.first, item.second)}
         for index, plane in enumerate(simulation.aircraft.values(), 1):
             col, row = grid(plane.x, plane.y)
-            color = red if plane.callsign in conflicted else yellow if plane.selected else cyan
-            put(col, row, "X" if plane.callsign in conflicted else "@" if plane.selected else str(index % 10), color)
+            color = red if plane.emergency or plane.callsign in conflicted else yellow if plane.selected else cyan
+            put(col, row, "!" if plane.emergency else "X" if plane.callsign in conflicted else "@" if plane.selected else str(index % 10), color)
             self.positions[plane.callsign] = ((col + .5) * cell_w, (row + .5) * cell_h)
             if index <= 17:
                 put(56, index + 3, f"{index:02d} {plane.callsign[:10]:10} {plane.altitude:5} {round(plane.heading):03d}", color)

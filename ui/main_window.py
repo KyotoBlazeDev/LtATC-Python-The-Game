@@ -5,7 +5,7 @@ import tkinter.font as tkfont
 import ctypes
 import sys
 from pathlib import Path
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from game.clearances import Clearance
 from game.constants import AIRCRAFT_LIMIT, GameMode
 from game.game_state import GameState
@@ -137,6 +137,14 @@ class MainWindow:
         view.add_cascade(label="Teletext Page", menu=teletext_pages)
         view.add_command(label="DOS Console", command=lambda: self._set_display_mode("dos"))
         menu_bar.add_cascade(label="View", menu=view, underline=0)
+
+        sandbox_menu = tk.Menu(menu_bar, tearoff=False)
+        sandbox_menu.add_command(label="Start three-minute shift", command=self.start_challenge)
+        sandbox_menu.add_command(label="Trigger emergency", command=self.trigger_emergency)
+        sandbox_menu.add_separator()
+        sandbox_menu.add_command(label="Save scenario...", command=self.save_sandbox)
+        sandbox_menu.add_command(label="Load scenario...", command=self.load_sandbox)
+        menu_bar.add_cascade(label="Sandbox", menu=sandbox_menu, underline=0)
 
         help_menu = tk.Menu(menu_bar, tearoff=False)
         help_menu.add_command(label="Keyboard Controls", command=self._show_keyboard_help)
@@ -635,6 +643,7 @@ class MainWindow:
             return
         self.sandbox = self.game.sandbox
         self.dialogue.clear()
+        self.reported = self.boundary_shown = False
         if collision_demo:
             self.dialogue.show("System", "Collision demo ready. Click Resume: these two aircraft will collide in about 4 seconds. Training safety is off.")
         else:
@@ -647,6 +656,60 @@ class MainWindow:
             self.start_lesson(self.game.active_id, restart=True)
         elif self.simulation.mode == GameMode.SANDBOX:
             self.start_sandbox(restart=True)
+
+    def start_challenge(self):
+        self.start_sandbox(restart=True)
+        self.sandbox.start_challenge()
+        self._drain_sandbox_messages()
+        self.refresh()
+
+    def trigger_emergency(self):
+        if self.simulation.mode == GameMode.SANDBOX:
+            if not self.sandbox.trigger_emergency():
+                self.dialogue.show("System", "Emergency unavailable: add airborne traffic or wait for the active emergency to finish.")
+            self._drain_sandbox_messages()
+            self.refresh()
+
+    def _drain_sandbox_messages(self):
+        if self.sandbox.messages:
+            self.dialogue.clear()
+        for message in self.sandbox.messages:
+            self.dialogue.show("System", message)
+        self.sandbox.messages.clear()
+
+    def save_sandbox(self):
+        if self.simulation.mode != GameMode.SANDBOX:
+            return
+        self.simulation.pause()
+        path = filedialog.asksaveasfilename(parent=self.root, title="Save Sandbox scenario",
+            defaultextension=".json", filetypes=(("LtATC scenario", "*.json"),))
+        if not path:
+            return
+        from sandbox.persistence import save_scenario
+        try:
+            save_scenario(path, self.sandbox)
+        except (OSError, ValueError) as error:
+            show_warning(str(error), parent=self.root)
+        else:
+            self.dialogue.show("System", "Scenario saved. Click Resume when ready.")
+        self.refresh()
+
+    def load_sandbox(self):
+        self.simulation.pause()
+        path = filedialog.askopenfilename(parent=self.root, title="Load Sandbox scenario",
+            filetypes=(("LtATC scenario", "*.json"),))
+        if not path:
+            return
+        try:
+            self.game.load_sandbox(path)
+        except (OSError, ValueError) as error:
+            show_warning(str(error), parent=self.root)
+            return
+        self.sandbox = self.game.sandbox
+        self.reported = self.boundary_shown = False
+        self.dialogue.clear()
+        self.dialogue.show("System", "Scenario loaded and paused. Inspect traffic, then Resume.")
+        self._build_game()
 
     def _build_game(self):
         self._clear()
@@ -832,20 +895,24 @@ class MainWindow:
     def _build_sandbox_toolbar(self, bar):
         settings = tk.LabelFrame(bar, text="Environment", padx=3, pady=2)
         settings.pack(fill="x", pady=(3, 0))
+        options_row = tk.Frame(settings)
+        options_row.pack(fill="x")
         for label, variable, options in (("Traffic rate", "traffic_rate", ("Manual", "Low", "Medium", "High")),
                                          ("Weather", "weather", ("Clear", "Cloudy", "Rain")),
                                          ("Time", "time_of_day", ("Day", "Dusk", "Night"))):
-            tk.Label(settings, text=label).pack(side="left", padx=3)
+            tk.Label(options_row, text=label).pack(side="left", padx=3)
             selected = tk.StringVar(value=getattr(self.sandbox, variable))
-            combo = tk.OptionMenu(settings, selected, *options,
+            combo = tk.OptionMenu(options_row, selected, *options,
                                   command=lambda value, v=variable: setattr(self.sandbox, v, value))
             combo.configure(width=8)
             combo.pack(side="left")
+        toggles = tk.Frame(settings)
+        toggles.pack(fill="x")
         for label, attribute in (("Emergencies", "emergencies"), ("Training safety", "training_safety"),
                                  ("Separation warnings", "separation_warnings")):
             target = self.sandbox if attribute == "emergencies" else self.simulation
             var = tk.BooleanVar(value=getattr(target, attribute))
-            tk.Checkbutton(settings, text=label, variable=var,
+            tk.Checkbutton(toggles, text=label, variable=var,
                             command=lambda t=target, a=attribute, v=var: setattr(t, a, v.get())).pack(side="left", padx=3)
         safety_settings = tk.LabelFrame(bar, text="Safety thresholds", padx=3, pady=2)
         safety_settings.pack(fill="x", pady=(3, 0))
@@ -892,7 +959,7 @@ class MainWindow:
         self.refresh()
 
     def spawn_aircraft(self):
-        if self.simulation.game_over:
+        if self.simulation.mode != GameMode.SANDBOX or self.simulation.game_over or self.simulation.session_finished or self.sandbox.challenge_active:
             return
         if self.sandbox.spawn() is None:
             messagebox.showinfo("Aircraft limit reached", f"Additional aircraft cannot be spawned until existing traffic leaves.\n{self.player_name} cannot add more aircraft yet.")
@@ -903,6 +970,8 @@ class MainWindow:
         if (simulation.mode != GameMode.SANDBOX or simulation.game_over
                 or simulation.get_aircraft(callsign) is None
                 or getattr(self, "_delete_confirmation_open", False)):
+            return
+        if self.sandbox.challenge_active or self.sandbox.challenge_finished:
             return
         self._delete_confirmation_open = True
         was_paused = simulation.paused
@@ -920,6 +989,8 @@ class MainWindow:
             self.refresh()
 
     def clear_all(self):
+        if self.simulation.mode != GameMode.SANDBOX or self.sandbox.challenge_active or self.sandbox.challenge_finished:
+            return
         for callsign in list(self.simulation.aircraft):
             self.simulation.remove_aircraft(callsign)
 
@@ -934,10 +1005,10 @@ class MainWindow:
 
     def check_runway(self):
         runway = self.simulation.runway
-        message = f"Runway {runway.name}: " + (f"occupied by {runway.occupied_by}" if runway.occupied_by else "clear")
+        message = f"Runway {runway.name}: " + ("closed" if runway.closed else f"occupied by {runway.occupied_by}" if runway.occupied_by else "clear")
         self.dialogue.show("System", message)
         lesson = self.lessons.current
-        if self.simulation.mode == GameMode.LESSON and lesson and not runway.occupied_by:
+        if self.simulation.mode == GameMode.LESSON and lesson and not runway.occupied_by and not runway.closed:
             lesson.runway_checked = True
         if self.simulation.mode == GameMode.STORY and self.story_manager.current and not runway.occupied_by:
             self.story_manager.current.handle_event(GameEvent(EventType.OBJECTIVE_COMPLETED, detail="runway_checked"))
@@ -960,6 +1031,14 @@ class MainWindow:
                 show_warning("Check Runway 27 status before transmitting a takeoff clearance.")
                 return
         plane = self.simulation.get_aircraft(callsign)
+        lesson = self.lessons.current if self.simulation.mode == GameMode.LESSON else None
+        if lesson and hasattr(lesson, "validate_clearance"):
+            warning = lesson.validate_clearance(plane, clearance)
+            if warning:
+                self.simulation.metrics.clearances_attempted += 1
+                self.simulation.metrics.unsafe_clearances_prevented += 1
+                show_warning(warning, parent=self.root)
+                return
         if chapter and plane:
             story_warning = chapter.validate_clearance(plane, clearance, self.simulation)
             if story_warning:
@@ -1032,6 +1111,14 @@ class MainWindow:
                 self._schedule_tick()
                 return
             self.simulation.update(dt)
+            if self.simulation.mode == GameMode.SANDBOX:
+                self.sandbox.update(dt)
+                self._drain_sandbox_messages()
+                if self.sandbox.challenge_finished and not self.reported:
+                    self.reported = True
+                    messagebox.showinfo("Shift report", self.sandbox.challenge_report, parent=self.root)
+                    if not self.root.winfo_exists():
+                        return
             if self.simulation.game_over:
                 self.refresh()
                 self._schedule_tick()
@@ -1122,6 +1209,8 @@ class MainWindow:
             state_text, state_bg, state_fg = "MENU", CLASSIC_GRAY, "#000000"
         elif self.simulation.game_over:
             state_text, state_bg, state_fg = "GAME OVER", "#a00000", "#ffffff"
+        elif self.simulation.session_finished:
+            state_text, state_bg, state_fg = "SHIFT COMPLETE", "#d7f2dc", "#003b17"
         elif any(item.critical for item in current_conflicts):
             state_text, state_bg, state_fg = "CRITICAL", "#a00000", "#ffffff"
         elif current_conflicts:
@@ -1147,6 +1236,14 @@ class MainWindow:
         active_lesson = self.lessons.current if mode == GameMode.LESSON else None
         self.lesson_panel.refresh(active_lesson,
                                   self.dialogue.current, self.images, mode.name)
+        if mode == GameMode.SANDBOX:
+            if self.sandbox.challenge_active:
+                self.lesson_panel.title_label.configure(text="Three-minute shift")
+                self.lesson_panel.objectives.configure(text=f"Time remaining: {max(0, 180 - int(self.sandbox.challenge_elapsed))}s\nAircraft handled: {self.sandbox.challenge_handled}\nMaintain separation; guide aircraft out or land them.")
+            elif self.sandbox.challenge_finished:
+                self.lesson_panel.objectives.configure(text=self.sandbox.challenge_report)
+            else:
+                self.lesson_panel.objectives.configure(text="Sandbox menu: Start shift, Trigger emergency, Save / Load scenario.\nYellow dashed arrow: 8-second target direction.")
         if mode == GameMode.STORY and self.story_panel:
             self.story_panel.refresh(self.story_manager.current)
         self.aircraft_panel.refresh(selected)

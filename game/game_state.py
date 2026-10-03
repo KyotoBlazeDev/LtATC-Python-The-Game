@@ -85,6 +85,17 @@ class GameState:
                                                 target_speed=90, state=AircraftState.AIRBORNE))
         return True
 
+    def load_sandbox(self, path):
+        from sandbox.persistence import load_scenario
+        loaded = load_scenario(path)
+        self.simulation.__dict__.clear()
+        self.simulation.__dict__.update(loaded.simulation.__dict__)
+        loaded.simulation = self.simulation
+        self.sandbox = loaded
+        self.lessons.current = self.story_manager.current = None
+        self.active_id = None
+        self.completion_recorded = False
+
     def complete_lesson(self, lesson_id: str) -> bool:
         if self.simulation.game_over or self.simulation.mode != GameMode.LESSON or self.active_id != lesson_id or self.completion_recorded:
             return False

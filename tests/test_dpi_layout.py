@@ -69,6 +69,14 @@ class DpiLayoutTests(unittest.TestCase):
 
                     window.start_sandbox()
                     root.update()
+                    environment = next(widget for widget in descendants(window.frame)
+                                       if widget.winfo_class() == "Labelframe"
+                                       and widget.cget("text") == "Environment")
+                    for widget in descendants(environment):
+                        if widget.winfo_class() in ("Menubutton", "Checkbutton", "Label"):
+                            self.assert_widget_inside_root(root, widget, percentage)
+                            self.assertGreaterEqual(widget.winfo_width(), widget.winfo_reqwidth(),
+                                                    f"{percentage}%: environment control clipped")
                     previous_right = 0
                     for field in window.status_fields:
                         self.assert_widget_inside_root(root, field, percentage)
