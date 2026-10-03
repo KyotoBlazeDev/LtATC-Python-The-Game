@@ -4,7 +4,8 @@
 
 LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, and it captures a Windows 95-era feel. It is not intended for real-world air traffic control training or operational use.
 
-<img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
+<img width="900" height="360" alt="image" src="https://github.com/user-attachments/assets/7cbb980f-0eff-4f15-95bf-b3d5a14d5e06" />
+_Game cover art of LtATC: Python The Game._
 
 Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
 
@@ -12,7 +13,7 @@ Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2
 > ## AI usage disclaimer
 > AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
 > 
-> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions, developed on September 11, 2026, under a private development build project, it may be public on the X posts (BlazeGamerzz, known as BlazeLegacy774) with a reference image.
+> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions, developed on September 11, 2026, under a private development build project; it may be public on the X posts (BlazeGamerzz, known as BlazeLegacy774) with a reference image.
 >
 > <img width="1920" height="1080" alt="Cuplikan layar 2026-09-11 212616" src="https://github.com/user-attachments/assets/1b816859-cb04-4b91-ac6e-3c2d83052faa" />
 > 
@@ -45,7 +46,7 @@ Use the **Sandbox** menu for these activities:
 - **Trigger emergency** alternates a priority landing request and a 15-second runway inspection closure. The **Emergencies** checkbox attempts an event every 30 simulation seconds. Priority aircraft show red markers and a PRIORITY label in graphical radar, or `!` in character displays. Land the priority aircraft to resolve its request. A closure blocks landing clearances, shows CLOSED on radar, and reopens automatically; all event timers stop while paused. Events remain pending when traffic or runway conditions prevent them.
 - **Save scenario / Load scenario** use portable JSON files containing aircraft, runway status, traffic and environment settings, speed, safety thresholds, and selected aircraft. Loading validates the whole file before replacing the scene and always pauses it. A bad file leaves the current scene intact. Saves are for regular Sandbox sessions; active or completed shifts and collision scenes cannot be saved. Progress and shift scores are separate from scenario files. Generation and emergency scheduling restart after loading; an active inspection closure retains its remaining duration.
 
-Aircraft leaving the radar sector are removed automatically in Sandbox so continuous traffic does not fill the aircraft limit with invisible targets.
+Aircraft leaving the radar sector are removed automatically in Sandbox, so continuous traffic does not fill the aircraft limit with invisible targets.
 
 Enter a controller name on the main menu (or lesson menu) to use it in Lesson and Sandbox dialogue, the status bar, and lesson reports. Leave it blank to use **Controller**. The name is kept only while the app is open and does not change Story Mode's source-labeled case files. Lesson and Story completion is saved locally between sessions; use **Reset progress** on the main menu to clear it.
 
