@@ -29,6 +29,7 @@ def build(version):
         subprocess.run([
             sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean",
             "--onedir", "--windowed", "--noupx", "--name", "LtATC",
+            "--icon", str(ROOT / "assets" / "Plane.png"),
             "--distpath", str(staging / "dist"), "--workpath", str(staging / "build"),
             "--specpath", str(staging), "--add-data", f"{ROOT / 'assets'}:assets", str(ROOT / "main.py"),
         ], cwd=ROOT, check=True)
