@@ -1,26 +1,43 @@
 # LtATC: Python The Game
 
-<img width="1099" height="278" alt="LtATC_Python_The_Game_logo" src="https://github.com/user-attachments/assets/d94e3394-95b7-4bab-95a0-95dcecce6ee5" />
+<img width="900" height="360" alt="LtATC: Python The Game cover art" src="https://github.com/user-attachments/assets/7cbb980f-0eff-4f15-95bf-b3d5a14d5e06" />
 
-LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme from the Windows 95 era. The retro-style look is pixelated, and it captures a Windows 95-era feel. It is not intended for real-world air traffic control training or operational use.
+**LtATC: Python The Game** is a Python/Tkinter educational air-traffic-control game with a fictional 1990s setting and a Windows 95-inspired visual identity. Read the radar, guide simulated aircraft, work through guided lessons, experiment in Sandbox, and explore source-labeled Story Mode decision studies based on documented aviation incidents.
 
-<img width="1377" height="940" alt="image" src="https://github.com/user-attachments/assets/266f76d3-7625-4169-9146-72b365e58c30" />
+The game combines its graphical radar with deliberately retro alternate displays, including a 40 × 25 Teletext view and an 80 × 25 DOS-style tactical console. Safety warnings, configurable Sandbox traffic, emergencies, scenario saving, keyboard navigation, and collision testing have grown from the original small prototype into the current public beta.
 
-Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
+> **LtATC is a game.** Aircraft behavior, distances, warnings, clearances, and scenarios are simplified for gameplay. It is not intended for real-world air traffic control training or operational use.
+
+<img width="1099" height="278" alt="LtATC: Python The Game logo" src="https://github.com/user-attachments/assets/d94e3394-95b7-4bab-95a0-95dcecce6ee5" />
+
+## Current status
+
+**Public beta — v0.9.0 Beta 3**
+
+Release target: ~~**October 7, 2026**~~ **December 20, 2026**.
+
+The project grew far beyond its original scope, so the release was rescheduled to allow more time for testing, polish, and school/exam responsibilities. Codex continues to assist and co-author development under human oversight; KyotoBlazeDev reviews, tests, and decides what becomes part of LtATC.
 
 > [!IMPORTANT]
 > ## AI usage disclaimer
 > AI-assisted tools were used during development. The developer reviewed and integrated all resulting material. The developer remains responsible for the project's design, implementation, and published content.
 > 
-> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions, developed on September 11, 2026, under a private development build project, it may be public on the X posts (BlazeGamerzz, known as BlazeLegacy774) with a reference image.
+> The original concept, **Learn The ATC: Python Edition**, is a Tkinter educational game about four air traffic service functions, developed on September 11, 2026, under a private development build project; it may be public on the X posts (BlazeGamerzz, known as BlazeLegacy774) with a reference image.
 >
 > <img width="1920" height="1080" alt="Cuplikan layar 2026-09-11 212616" src="https://github.com/user-attachments/assets/1b816859-cb04-4b91-ac6e-3c2d83052faa" />
 > 
 > Story Mode is now a set of source-labeled decision studies based on documented NTSB incidents. The scenarios use schematic aircraft positions, simplified choices, and paraphrased summaries. They do not reproduce flight tracks, radio transcripts, or operational procedures.
 
-## Plot
+## The game
 
-In the 1990s, you work as an air traffic controller, interpreting the radar picture and responding to aircraft requests. Every scenario is simulated and must not be used for real-world ATC operations. In 1995, these simulators were iconic but retro for a Windows 95 theme used as an `import tkinter as tk` code theme, rather than `from tkinter import ttk`.
+LtATC presents a fictional 1990s air-traffic-control environment through a deliberately retro desktop interface. You interpret the radar picture, respond to simulated aircraft, and use the same underlying game systems through graphical, Teletext, and DOS-style views.
+
+The Windows 95-inspired presentation is part of the game's identity, but the simulation underneath it has grown into multiple modes: guided Lessons, an open-ended Sandbox, and Story Mode decision studies. Everything remains simplified and game-oriented rather than an attempt to reproduce operational ATC software or procedures.
+
+## Screenshots and visual identity
+
+The cover art at the top represents LtATC's current public identity. The project began as **Learn The ATC: Python Edition** on September 11, 2026, and the original prototype screenshot preserved below shows how far the interface has evolved.
+
 
 ## Run
 
@@ -85,7 +102,7 @@ Use the **Sandbox** menu for these activities:
 
 The **Flight strip** panel shows the selected aircraft's callsign, status, current and assigned altitude, heading, speed, and destination. Sandbox traffic receives either **LAND** or a **NORTH / EAST / SOUTH / WEST** exit assignment. Guide landing traffic through approach and landing; guide outbound traffic through the matching cyan gate on graphical radar. North/south gates are centered at x=350 and east/west gates at y=295, each spanning 160 logical pixels. Completion is checked when an aircraft clears the sector's 30-pixel outer margin. Exiting elsewhere or landing an outbound aircraft counts as a missed destination during a shift, with no assignment points. Priority landing requests change the destination to LAND. Scenario files preserve destinations; older saves receive assignments on load. Select aircraft with the existing mouse or keyboard shortcuts to review each strip, including in DOS and Teletext views.
 
-Aircraft leaving the radar sector are removed automatically in Sandbox so continuous traffic does not fill the aircraft limit with invisible targets.
+Aircraft leaving the radar sector are removed automatically in Sandbox, so continuous traffic does not fill the aircraft limit with invisible targets.
 
 Enter a controller name on the main menu (or lesson menu) to use it in Lesson and Sandbox dialogue, the status bar, and lesson reports. Leave it blank to use **Controller**. The name is kept only while the app is open and does not change Story Mode's source-labeled case files. Lesson and Story completion is saved locally between sessions; use **Reset progress** on the main menu to clear it.
 
