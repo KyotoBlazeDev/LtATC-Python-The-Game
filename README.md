@@ -68,15 +68,22 @@ animation frames, the menu, Sandbox radar and flight strip, scenario save/load,
 and DOS/Teletext displays. It uses temporary progress and scenario files.
 
 `.github/workflows/release.yml` runs when a `v*` tag is pushed. Supported versions
-are `vX.Y.Z`, `vX.Y.Z-alpha.N`, `vX.Y.Z-beta.N`, and `vX.Y.Z-rc.N`. Commit the desired
+are `vX.Y.Z` and numbered alpha/beta/rc suffixes with a dot or hyphen, such as
+`v0.9.0-beta-4` or `v0.9.0-beta.4`. Commit the desired
 release contents first, then create and push the chosen tag. The workflow tests
 Python 3.11–3.13 on Linux and Windows, builds on Windows with Python 3.12, verifies
 the extracted ZIP, and uploads the ZIP and checksum to a **draft GitHub release**.
 Prerelease tags are marked as prereleases. Review the files and generated notes
 before publishing the draft. The executable is currently unsigned.
 
-For a manual rerun, choose an existing version tag in Actions or run
-`gh workflow run release.yml --ref v0.1.0`. Running on a branch is rejected. Reruns
+For a manual run, open Actions → Portable Windows release → Run workflow. Leave
+the branch set to `main`. With the inputs blank, this creates a preview ZIP named
+with `v0.0.0-preview.<run-number>` in the workflow artifact, without creating a release.
+To create a draft release from `main`, enter the desired version and check
+**Create a draft GitHub release**. After tests and packaging pass, the workflow
+creates that tag at the tested commit if it does not exist. An existing tag must
+point to the same commit; existing tags are never moved. You can also select an
+existing tag and check the draft option to build a draft for that tag. Reruns
 can replace assets on an existing draft, but refuse to alter a published release.
 Only the final release job receives `contents: write`; test and build jobs have
 read access. The smoke report remains available in the workflow artifact for 14 days.

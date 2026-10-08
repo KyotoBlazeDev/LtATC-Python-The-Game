@@ -4,6 +4,15 @@ on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, e.g. v0.9.0-beta-4 (blank creates a preview ZIP)"
+        required: false
+        type: string
+      create_draft:
+        description: "Create a draft GitHub release after testing (requires version on a branch)"
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -18,20 +27,30 @@ jobs:
     timeout-minutes: 5
     outputs:
       tag: ${{ steps.version.outputs.tag }}
+      publish: ${{ steps.version.outputs.publish }}
+      create_tag: ${{ steps.version.outputs.create_tag }}
     steps:
-      - name: Validate version tag
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Resolve version and release intent
         id: version
         env:
           REF_TYPE: ${{ github.ref_type }}
           TAG: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+          VERSION: ${{ inputs.version }}
+          CREATE_DRAFT: ${{ inputs.create_draft }}
         run: |
           python - <<'PY'
-          import os, re
-          tag = os.environ['TAG']
-          if os.environ['REF_TYPE'] != 'tag' or not re.fullmatch(r'v\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?', tag):
-              raise SystemExit('Run this workflow on a version tag: vX.Y.Z or vX.Y.Z-alpha.N / beta.N / rc.N')
+          import os
+          from release_config import resolve_release
+          values = resolve_release(os.environ['EVENT'], os.environ['REF_TYPE'], os.environ['TAG'],
+              os.environ['VERSION'], os.environ['CREATE_DRAFT'] == 'true', os.environ['GITHUB_RUN_NUMBER'])
           with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
-              stream.write(f'tag={tag}\n')
+              for key, value in values.items():
+                  stream.write(f'{key}={value}\n')
+          print(f"Version: {values['tag']}; create draft: {values['publish']}")
           PY
 
   test:
@@ -94,6 +113,7 @@ jobs:
 
   draft-release:
     needs: [validate, build]
+    if: needs.validate.outputs.publish == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -106,19 +126,32 @@ jobs:
       - name: Verify checksum
         working-directory: artifacts
         run: sha256sum --check *.zip.sha256
-      - name: Confirm tag still points to the tested commit
+      - name: Confirm or create tag at the tested commit
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ needs.validate.outputs.tag }}
           EXPECTED_SHA: ${{ github.sha }}
+          ALLOW_CREATE: ${{ needs.validate.outputs.create_tag }}
         run: |
           python - <<'PY'
-          import json, os, subprocess
+          import json, os, subprocess, urllib.error, urllib.request
           repo = os.environ['GH_REPO']
           def request(endpoint):
               return json.loads(subprocess.check_output(['gh', 'api', endpoint], text=True))
-          obj = request(f"repos/{repo}/git/ref/tags/{os.environ['RELEASE_TAG']}")['object']
+          endpoint = f"repos/{repo}/git/ref/tags/{os.environ['RELEASE_TAG']}"
+          url = urllib.request.Request('https://api.github.com/' + endpoint,
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(url) as response:
+                  obj = json.load(response)['object']
+          except urllib.error.HTTPError as error:
+              if error.code != 404 or os.environ['ALLOW_CREATE'] != 'true':
+                  raise
+              created = json.loads(subprocess.check_output(['gh', 'api', '--method', 'POST',
+                  f'repos/{repo}/git/refs', '-f', 'ref=refs/tags/' + os.environ['RELEASE_TAG'],
+                  '-f', 'sha=' + os.environ['EXPECTED_SHA']], text=True))
+              obj = created['object']
           for _ in range(10):
               if obj['type'] == 'commit':
                   break

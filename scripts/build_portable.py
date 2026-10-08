@@ -12,11 +12,13 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from release_config import VERSION_PATTERN
 
 
 def build(version):
-    if not re.fullmatch(r"v\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?", version):
-        raise ValueError("Use vX.Y.Z or vX.Y.Z-alpha.N / beta.N / rc.N")
+    if not re.fullmatch(VERSION_PATTERN, version):
+        raise ValueError("Use vX.Y.Z or a numbered alpha, beta, rc, or preview suffix")
     if sys.platform != "win32" or platform.machine().lower() not in ("amd64", "x86_64") or sys.maxsize <= 2**32:
         raise RuntimeError("Build with 64-bit Python on Windows x64")
     # Every invocation has its own staging area, so stale files cannot enter the ZIP.
