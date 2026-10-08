@@ -2,6 +2,9 @@
 
 <img width="900" height="360" alt="LtATC: Python The Game cover art" src="https://github.com/user-attachments/assets/7cbb980f-0eff-4f15-95bf-b3d5a14d5e06" />
 
+[![Tests](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/actions/workflows/python-app.yml/badge.svg?branch=main&event=push)](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/actions/workflows/python-app.yml)
+[![Portable build](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/actions/workflows/release.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/actions/workflows/release.yml)
+
 **LtATC: Python The Game** is a Python/Tkinter educational air-traffic-control game with a fictional 1990s setting and a Windows 95-inspired visual identity. Read the radar, guide simulated aircraft, work through guided lessons, experiment in Sandbox, and explore source-labeled Story Mode decision studies based on documented aviation incidents.
 
 The game combines its graphical radar with deliberately retro alternate displays, including a 40 × 25 Teletext view and an 80 × 25 DOS-style tactical console. Safety warnings, configurable Sandbox traffic, emergencies, scenario saving, keyboard navigation, and collision testing have grown from the original small prototype into the current public beta.
