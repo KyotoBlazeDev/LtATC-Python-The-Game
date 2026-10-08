@@ -17,6 +17,7 @@ class SandboxManager:
         self.challenge_finished = False
         self.challenge_elapsed = 0.0
         self.challenge_handled = 0
+        self.challenge_missed = 0
         self.challenge_safe_seconds = 0.0
         self.challenge_report = ""
         self._emergency_elapsed = 0.0
@@ -24,12 +25,30 @@ class SandboxManager:
         self._next_emergency = "priority"
         self.messages = []
 
+    def assign_destination(self, plane):
+        if not plane.destination:
+            plane.destination = random.choice(("LAND", "NORTH", "EAST", "SOUTH", "WEST"))
+
+    @staticmethod
+    def reached_destination(plane):
+        if plane.destination == "LAND":
+            return plane.state == AircraftState.PARKED and plane.altitude == 0
+        if plane.altitude <= 0:
+            return False
+        return {
+            "NORTH": plane.y < -30 and abs(plane.x - 350) <= 80,
+            "SOUTH": plane.y > 620 and abs(plane.x - 350) <= 80,
+            "WEST": plane.x < -30 and abs(plane.y - 295) <= 80,
+            "EAST": plane.x > 730 and abs(plane.y - 295) <= 80,
+        }.get(plane.destination, False)
+
     def start_challenge(self):
         self.simulation.session_finished = False
         self.challenge_active = True
         self.challenge_finished = False
         self.challenge_elapsed = self.challenge_safe_seconds = 0.0
         self.challenge_handled = 0
+        self.challenge_missed = 0
         self.traffic_rate = "Low"
         self.messages.append("Three-minute shift started. Guide traffic out of the sector or land it; keep separation. Traffic increases each minute.")
 
@@ -49,6 +68,7 @@ class SandboxManager:
         if plane is None or any(p.emergency for p in sim.aircraft.values()):
             return False
         plane.emergency = True
+        plane.destination = "LAND"
         self._next_emergency = "closure"
         self.messages.append(f"{plane.callsign}: priority landing requested. Select this aircraft, arrange an approach, check runway availability, and land.")
         return True
@@ -62,6 +82,7 @@ class SandboxManager:
                 sim.runway.closed = False
                 self.messages.append("Runway inspection complete: runway reopened.")
         for plane in list(sim.aircraft.values()):
+            self.assign_destination(plane)
             landed = plane.state == AircraftState.PARKED and plane.altitude == 0
             exited = plane.x < -30 or plane.x > 730 or plane.y < -30 or plane.y > 620
             if plane.emergency and landed:
@@ -69,7 +90,12 @@ class SandboxManager:
                 self.messages.append(f"{plane.callsign}: priority landing complete.")
             if exited or (landed and self.challenge_active):
                 if self.challenge_active:
-                    self.challenge_handled += 1
+                    if self.reached_destination(plane):
+                        self.challenge_handled += 1
+                    else:
+                        self.challenge_missed += 1
+                outcome = "Assignment complete" if self.reached_destination(plane) else "Destination missed"
+                self.messages.append(f"{plane.callsign}: {outcome} ({plane.destination}).")
                 sim.remove_aircraft(plane.callsign)
         if self.emergencies:
             self._emergency_elapsed += seconds
@@ -91,7 +117,8 @@ class SandboxManager:
         self.challenge_finished = True
         score = self.challenge_handled * 100 + round(self.challenge_safe_seconds)
         self.challenge_report = (f"{'Shift ended by collision' if failed else 'Shift complete'}\n"
-            f"Aircraft handled: {self.challenge_handled}\n"
+            f"Assignments completed: {self.challenge_handled}\n"
+            f"Destinations missed: {self.challenge_missed}\n"
             f"Seconds with separation: {round(self.challenge_safe_seconds)}\n"
             f"Unsafe commands prevented: {self.simulation.metrics.unsafe_clearances_prevented}\n"
             f"Score: {score}\nRetry starts a fresh Sandbox; Start shift starts a new challenge.")
@@ -140,6 +167,7 @@ class SandboxManager:
             conflicts = sim.safety.conflicts([*sim.aircraft.values(), plane])
             if any(plane.callsign in (c.first, c.second) for c in conflicts):
                 continue
+            self.assign_destination(plane)
             if sim.spawn_aircraft(plane):
                 self.next_number += 1
                 return plane
@@ -157,4 +185,5 @@ class SandboxManager:
         speed = random.randrange(70, 121)
         plane = Aircraft(callsign, random.randrange(90, 610), random.randrange(85, 560), heading,
                          altitude, speed, heading, altitude, speed, AircraftState.AIRBORNE)
+        self.assign_destination(plane)
         return plane if self.simulation.spawn_aircraft(plane) else None

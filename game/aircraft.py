@@ -30,6 +30,7 @@ class Aircraft:
     selected: bool = False
     emergency: bool = False
     on_runway: bool = False
+    destination: str = ""
 
     def update(self, dt: float) -> None:
         if self.state == AircraftState.TAKEOFF_ROLL:

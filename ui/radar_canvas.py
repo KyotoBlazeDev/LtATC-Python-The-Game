@@ -86,6 +86,12 @@ class RadarCanvas(tk.Canvas):
             self.create_oval(width/2-radius, height/2-radius, width/2+radius, height/2+radius, outline="#274b4b")
         self.create_line(width/2, 0, width/2, height, fill="#274b4b")
         self.create_line(0, height/2, width, height/2, fill="#274b4b")
+        if simulation.mode.name == "SANDBOX":
+            for name, x, y, anchor in (("NORTH", 350, 8, "n"), ("SOUTH", 350, 582, "s"),
+                                        ("WEST", 8, 295, "w"), ("EAST", 692, 295, "e")):
+                points = (x - 80, y, x + 80, y) if name in ("NORTH", "SOUTH") else (x, y - 80, x, y + 80)
+                self.create_line(*screen(*points[:2]), *screen(*points[2:]), fill="#70d9da", width=3, tags="exit_gate")
+                self.create_text(*screen(x, y), text=name, anchor=anchor, fill="#70d9da", tags="exit_gate")
         r = simulation.runway
         start_x, start_y = screen(r.start_x, r.start_y)
         end_x, end_y = screen(r.end_x, r.end_y)

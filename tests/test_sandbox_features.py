@@ -58,6 +58,56 @@ class SandboxFeatureTests(unittest.TestCase):
         self.assertIsNone(manager.spawn())
         self.assertFalse(self.game.simulation.transmit("ACADEMY 02", Clearance(C.HEADING, 90)).safe)
 
+    def test_assignment_scoring_requires_the_correct_gate(self):
+        manager = self.game.sandbox
+        manager.start_challenge()
+        plane = self.game.simulation.get_aircraft("ACADEMY 02")
+        plane.destination = "NORTH"
+        plane.x, plane.y = 740, 295
+        manager.update(.1)
+        self.assertEqual(manager.challenge_handled, 0)
+        self.assertEqual(manager.challenge_missed, 1)
+        self.assertNotIn(plane.callsign, self.game.simulation.aircraft)
+        self.assertIn("Destination missed", manager.messages[-1])
+
+    def test_all_exit_gates_and_landing_assignment(self):
+        manager = self.game.sandbox
+        plane = self.game.simulation.get_aircraft("ACADEMY 02")
+        for destination, x, y in (("NORTH", 350, -31), ("SOUTH", 350, 621),
+                                   ("WEST", -31, 295), ("EAST", 731, 295)):
+            plane.destination, plane.x, plane.y = destination, x, y
+            self.assertTrue(manager.reached_destination(plane))
+            if destination in ("NORTH", "SOUTH"):
+                plane.x = 431
+            else:
+                plane.y = 376
+            self.assertFalse(manager.reached_destination(plane))
+        manager.start_challenge()
+        plane.destination = "LAND"
+        plane.x, plane.y = 350, 295
+        plane.state, plane.altitude = AircraftState.PARKED, 0
+        manager.update(.1)
+        self.assertEqual(manager.challenge_handled, 1)
+        manager.update(.1)
+        self.assertEqual(manager.challenge_handled, 1)
+
+    def test_destination_persistence_and_legacy_scenarios(self):
+        plane = self.game.simulation.get_aircraft("ACADEMY 02")
+        plane.destination = "WEST"
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / "scenario.json"
+            save_scenario(path, self.game.sandbox)
+            self.assertEqual(load_scenario(path).simulation.get_aircraft(plane.callsign).destination, "WEST")
+            data = json.loads(path.read_text())
+            data["aircraft"][0]["destination"] = "UNKNOWN"
+            path.write_text(json.dumps(data))
+            with self.assertRaises(ValueError):
+                load_scenario(path)
+            del data["aircraft"][0]["destination"]
+            path.write_text(json.dumps(data))
+            self.assertIn(load_scenario(path).simulation.get_aircraft(plane.callsign).destination,
+                          ("LAND", "NORTH", "EAST", "SOUTH", "WEST"))
+
     def test_automatic_emergencies_and_bounded_trails(self):
         manager = self.game.sandbox
         manager.emergencies = True
@@ -104,6 +154,7 @@ class FeatureSmokeTests(unittest.TestCase):
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)
+            window._cancel_startup()
             window.show_lesson_menu()
             root.update()
             buttons = [child for child in self.descendants(window.frame)
@@ -126,6 +177,8 @@ class FeatureSmokeTests(unittest.TestCase):
             window.simulation.update(.2)
             window.simulation.update(.2)
             window.refresh()
+            self.assertTrue(window.radar.find_withtag("exit_gate"))
+            self.assertIn("DEST EAST", window.aircraft_panel.label.cget("text"))
             self.assertTrue(window.radar.find_withtag("trail"))
             self.assertTrue(window.radar.find_withtag("heading_preview"))
             with TemporaryDirectory() as folder:

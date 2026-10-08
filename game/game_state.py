@@ -82,7 +82,7 @@ class GameState:
             return True
         self.simulation.spawn_aircraft(Aircraft("ACADEMY 02", 390, 280, heading=270, altitude=3000,
                                                 speed=90, target_heading=270, target_altitude=3000,
-                                                target_speed=90, state=AircraftState.AIRBORNE))
+                                                target_speed=90, state=AircraftState.AIRBORNE, destination="EAST"))
         return True
 
     def load_sandbox(self, path):

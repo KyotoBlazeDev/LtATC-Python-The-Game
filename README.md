@@ -30,6 +30,44 @@ Use Python 3.11 or newer. No packages or network access are required.
 python main.py
 ```
 
+## Portable Windows release
+
+The portable edition is a Windows x64 ZIP. Extract the entire ZIP and run
+`LtATC/LtATC.exe`; keep its `_internal` folder beside the executable. Python and an
+installer are not required. Progress stays in `%LOCALAPPDATA%\LtATC\progress.json`,
+so replacing the extracted game folder does not erase progress.
+
+To build locally with 64-bit Python 3.12 on Windows:
+
+```powershell
+python -m pip install -r requirements-build.txt
+python scripts/build_portable.py v0.1.0
+```
+
+The script writes a ZIP, its `.zip.sha256` checksum, and a smoke-test JSON report
+under ignored `artifacts/`. It extracts and launches the candidate ZIP from an
+isolated folder before accepting it. The check exercises bundled images and
+animation frames, the menu, Sandbox radar and flight strip, scenario save/load,
+and DOS/Teletext displays. It uses temporary progress and scenario files.
+
+`.github/workflows/release.yml` runs when a `v*` tag is pushed. Supported versions
+are `vX.Y.Z`, `vX.Y.Z-alpha.N`, `vX.Y.Z-beta.N`, and `vX.Y.Z-rc.N`. Commit the desired
+release contents first, then create and push the chosen tag. The workflow tests
+Python 3.11–3.13 on Linux and Windows, builds on Windows with Python 3.12, verifies
+the extracted ZIP, and uploads the ZIP and checksum to a **draft GitHub release**.
+Prerelease tags are marked as prereleases. Review the files and generated notes
+before publishing the draft. The executable is currently unsigned.
+
+For a manual rerun, choose an existing version tag in Actions or run
+`gh workflow run release.yml --ref v0.1.0`. Running on a branch is rejected. Reruns
+can replace assets on an existing draft, but refuse to alter a published release.
+Only the final release job receives `contents: write`; test and build jobs have
+read access. The smoke report remains available in the workflow artifact for 14 days.
+
+Verify the downloaded ZIP in PowerShell with `Get-FileHash <zip-path> -Algorithm SHA256`
+and compare it with the supplied checksum file. A checksum confirms the downloaded
+file's contents; it is not a publisher signature.
+
 ## Gameplay / How to use
 The Tkinter window opens at the main menu. Story Mode offers four case studies; Lesson Mode offers four separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
 
@@ -41,9 +79,11 @@ The graphical radar shows a short aircraft trail and a yellow dashed **8-second 
 
 Use the **Sandbox** menu for these activities:
 
-- **Start three-minute shift** starts fresh traffic and increases the rate from Low to Medium to High each minute. Guide aircraft out of the sector or land them while maintaining separation. Manual spawning and removal are disabled during a shift. The report awards 100 points per aircraft handled plus one point per second without a current separation warning. Paused time does not count. Completion or collision freezes the shift; start another shift or use Simulation → Reset Scenario for regular Sandbox.
+- **Start three-minute shift** starts fresh traffic and increases the rate from Low to Medium to High each minute. Guide aircraft out of the sector or land them while maintaining separation. Manual spawning and removal are disabled during a shift. The report awards 100 points per completed assignment plus one point per second without a current separation warning. Paused time does not count. Completion or collision freezes the shift; start another shift or use Simulation → Reset Scenario for regular Sandbox.
 - **Trigger emergency** alternates a priority landing request and a 15-second runway inspection closure. The **Emergencies** checkbox attempts an event every 30 simulation seconds. Priority aircraft show red markers and a PRIORITY label in graphical radar, or `!` in character displays. Land the priority aircraft to resolve its request. A closure blocks landing clearances, shows CLOSED on radar, and reopens automatically; all event timers stop while paused. Events remain pending when traffic or runway conditions prevent them.
 - **Save scenario / Load scenario** use portable JSON files containing aircraft, runway status, traffic and environment settings, speed, safety thresholds, and selected aircraft. Loading validates the whole file before replacing the scene and always pauses it. A bad file leaves the current scene intact. Saves are for regular Sandbox sessions; active or completed shifts and collision scenes cannot be saved. Progress and shift scores are separate from scenario files. Generation and emergency scheduling restart after loading; an active inspection closure retains its remaining duration.
+
+The **Flight strip** panel shows the selected aircraft's callsign, status, current and assigned altitude, heading, speed, and destination. Sandbox traffic receives either **LAND** or a **NORTH / EAST / SOUTH / WEST** exit assignment. Guide landing traffic through approach and landing; guide outbound traffic through the matching cyan gate on graphical radar. North/south gates are centered at x=350 and east/west gates at y=295, each spanning 160 logical pixels. Completion is checked when an aircraft clears the sector's 30-pixel outer margin. Exiting elsewhere or landing an outbound aircraft counts as a missed destination during a shift, with no assignment points. Priority landing requests change the destination to LAND. Scenario files preserve destinations; older saves receive assignments on load. Select aircraft with the existing mouse or keyboard shortcuts to review each strip, including in DOS and Teletext views.
 
 Aircraft leaving the radar sector are removed automatically in Sandbox so continuous traffic does not fill the aircraft limit with invisible targets.
 

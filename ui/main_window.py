@@ -262,7 +262,7 @@ class MainWindow:
             "LtATC: Python The Game\n"
             "Air Traffic Control Training Simulator\n\n"
             "Developed by KyotoBlazeDev\n\n"
-            "Release date: October 7, 2026\n\n"
+            "Release date: December 20, 2026\n\n"
             "AI USAGE DISCLAIMER\n"
             "AI-assisted tools were used during development. All resulting material was "
             "reviewed and integrated under the developer's direction.\n\n"
@@ -1239,7 +1239,7 @@ class MainWindow:
         if mode == GameMode.SANDBOX:
             if self.sandbox.challenge_active:
                 self.lesson_panel.title_label.configure(text="Three-minute shift")
-                self.lesson_panel.objectives.configure(text=f"Time remaining: {max(0, 180 - int(self.sandbox.challenge_elapsed))}s\nAircraft handled: {self.sandbox.challenge_handled}\nMaintain separation; guide aircraft out or land them.")
+                self.lesson_panel.objectives.configure(text=f"Time remaining: {max(0, 180 - int(self.sandbox.challenge_elapsed))}s\nAssignments completed: {self.sandbox.challenge_handled}\nDestinations missed: {self.sandbox.challenge_missed}\nFollow each flight strip destination; keep separation.")
             elif self.sandbox.challenge_finished:
                 self.lesson_panel.objectives.configure(text=self.sandbox.challenge_report)
             else:

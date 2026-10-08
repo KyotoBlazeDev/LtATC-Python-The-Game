@@ -70,6 +70,9 @@ def load_scenario(path):
                     raise ValueError(f"Invalid aircraft {key}.")
             if type(item["altitude"]) is not int or type(item["target_altitude"]) is not int:
                 raise ValueError("Altitude must be a whole number.")
+            destination = item.get("destination", "")
+            if not isinstance(destination, str) or destination not in ("", "LAND", "NORTH", "EAST", "SOUTH", "WEST"):
+                raise ValueError("Invalid aircraft destination.")
             item["state"] = AircraftState[item["state"]]
             plane = Aircraft(**item)
             if not sim.spawn_aircraft(plane):
@@ -105,6 +108,8 @@ def load_scenario(path):
             raise ValueError("Selected aircraft is missing.")
         sim.select(selected)
         manager = SandboxManager(sim)
+        for plane in sim.aircraft.values():
+            manager.assign_destination(plane)
         settings = data["settings"]
         for key, options in (("traffic_rate", ("Manual", "Low", "Medium", "High")),
                              ("weather", ("Clear", "Cloudy", "Rain")),

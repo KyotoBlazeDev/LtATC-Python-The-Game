@@ -228,3 +228,5 @@ pytest-cache-files-*/
 .env.*
 *.tmp
 progress.json
+artifacts/
+.release-tools/
