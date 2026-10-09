@@ -15,7 +15,7 @@ The game combines its graphical radar with deliberately retro alternate displays
 
 ## Current status
 
-**Public beta — v0.9.0 Beta 3**
+**Public beta — v0.9.0 Beta 4**
 
 Release target: ~~**October 7, 2026**~~ **December 20, 2026**.
 
