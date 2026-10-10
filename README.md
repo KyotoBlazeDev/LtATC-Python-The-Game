@@ -149,5 +149,9 @@ To try game over, open Sandbox, click **Collision demo**, then **Resume**. The d
 
 `GameState` owns mode transitions, scene restarts, actor creation, and persisted completion progress. Repeated requests for the active lesson or chapter do nothing; Retry explicitly resets that scene. The core simulation is shared across all modes and independent of Tkinter. Aircraft positions in Story Mode are schematic and static; the decision studies are about reading documented risk and choosing a response, not recreating the exact event or training real-world procedures.
 
+## The Game: Powered by Tcl/Tk
+
+<img width="74" height="100" alt="pwrdLogo100" src="https://github.com/user-attachments/assets/29604f0f-5759-4c44-ac75-5df3d94d5da6" />
+
 ## Feedback
 Bugs and pull requests are welcome; the Code of Conduct remains planned. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
