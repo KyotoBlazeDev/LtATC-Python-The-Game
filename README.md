@@ -151,7 +151,7 @@ To try game over, open Sandbox, click **Collision demo**, then **Resume**. The d
 
 ## The Game: Powered by Tcl/Tk
 
-<img width="74" height="100" alt="pwrdLogo100" src="https://github.com/user-attachments/assets/29604f0f-5759-4c44-ac75-5df3d94d5da6" />
+<img width="113" height="175" alt="pwrdLogo175" src="https://github.com/user-attachments/assets/50c4e081-63e5-4ea3-872f-29bd96990d5a" />
 
 ## Feedback
 Bugs and pull requests are welcome; the Code of Conduct remains planned. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
