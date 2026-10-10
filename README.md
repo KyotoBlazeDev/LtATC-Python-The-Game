@@ -10,6 +10,10 @@ LtATC: Python The Game is an educational ATC game prototype, but its 1990s theme
 <img width="900" height="360" alt="image" src="https://github.com/user-attachments/assets/7cbb980f-0eff-4f15-95bf-b3d5a14d5e06" />
 _Game cover art of LtATC: Python The Game._
 
+## Current status
+
+**Public beta — v0.9.0 Beta 4**
+
 Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
 
 > [!IMPORTANT]
@@ -132,6 +136,10 @@ To try game over, open Sandbox, click **Collision demo**, then **Resume**. The d
 - `assets/`: supplied artwork
 
 `GameState` owns mode transitions, scene restarts, actor creation, and persisted completion progress. Repeated requests for the active lesson or chapter do nothing; Retry explicitly resets that scene. The core simulation is shared across all modes and independent of Tkinter. Aircraft positions in Story Mode are schematic and static; the decision studies are about reading documented risk and choosing a response, not recreating the exact event or training real-world procedures.
+
+## The Game: Powered by Tcl/Tk
+
+<img width="113" height="175" alt="pwrdLogo175" src="https://github.com/user-attachments/assets/50c4e081-63e5-4ea3-872f-29bd96990d5a" />
 
 ## Feedback
 Bugs and pull requests are welcome; the Code of Conduct remains planned. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
