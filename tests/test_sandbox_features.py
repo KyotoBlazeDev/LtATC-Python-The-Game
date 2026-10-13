@@ -179,6 +179,16 @@ class FeatureSmokeTests(unittest.TestCase):
             window.refresh()
             self.assertTrue(window.radar.find_withtag("exit_gate"))
             self.assertIn("DEST EAST", window.aircraft_panel.label.cget("text"))
+            self.assertEqual(set(window.aircraft_panel.strips), set(window.simulation.aircraft))
+            strip = window.aircraft_panel.strips["ACADEMY 02"]
+            self.assertIn("EAST", strip.cget("text"))
+            window.select_aircraft(None)
+            strip.invoke()
+            self.assertEqual(window.simulation.selected_callsign, "ACADEMY 02")
+            self.assertEqual(strip.cget("relief"), "sunken")
+            window.simulation.aircraft["ACADEMY 02"].emergency = True
+            window.refresh()
+            self.assertIn("PRIORITY", strip.cget("text"))
             self.assertTrue(window.radar.find_withtag("trail"))
             self.assertTrue(window.radar.find_withtag("heading_preview"))
             with TemporaryDirectory() as folder:
@@ -186,6 +196,8 @@ class FeatureSmokeTests(unittest.TestCase):
                 with patch("ui.main_window.filedialog.asksaveasfilename", return_value=path):
                     window.save_sandbox()
                 window.clear_all()
+                window.refresh()
+                self.assertFalse(window.aircraft_panel.strips)
                 with patch("ui.main_window.filedialog.askopenfilename", return_value=path):
                     window.load_sandbox()
                 self.assertIn("ACADEMY 02", window.simulation.aircraft)

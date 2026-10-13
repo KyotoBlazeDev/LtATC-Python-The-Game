@@ -788,7 +788,7 @@ class MainWindow:
         if self.simulation.mode == GameMode.STORY:
             self.story_panel = StoryPanel(right, self.story_action)
             self.story_panel.pack(fill="x", pady=4)
-        self.aircraft_panel = AircraftPanel(right)
+        self.aircraft_panel = AircraftPanel(right, self.select_aircraft)
         self.aircraft_panel.pack(fill="x", pady=4)
         self.controls = ControlPanel(right, self.issue_clearance)
         self.controls.pack(fill="x", pady=4)
@@ -1246,5 +1246,5 @@ class MainWindow:
                 self.lesson_panel.objectives.configure(text="Sandbox menu: Start shift, Trigger emergency, Save / Load scenario.\nYellow dashed arrow: 8-second target direction.")
         if mode == GameMode.STORY and self.story_panel:
             self.story_panel.refresh(self.story_manager.current)
-        self.aircraft_panel.refresh(selected)
+        self.aircraft_panel.refresh(selected, self.simulation.aircraft.values())
         self.controls.refresh(selected, mode == GameMode.SANDBOX)
