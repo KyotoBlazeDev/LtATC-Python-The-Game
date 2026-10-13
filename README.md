@@ -84,7 +84,7 @@ and compare it with the supplied checksum file. A checksum confirms the download
 file's contents; it is not a publisher signature.
 
 ## Gameplay / How to use
-The Tkinter window opens at the main menu. Story Mode offers four case studies; Lesson Mode offers four separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
+The Tkinter window opens to the main menu. Story Mode offers four case studies; Lesson Mode offers four separate guided exercises; Sandbox Mode is free experimentation without story consequences. Click an aircraft marker to select it. In Story Mode, use the **Story objective** decision buttons to review evidence, choose a safety response, and read the documented outcome. Standard clearance buttons are reserved for Lesson and Sandbox modes. Advance case narration with **Next dialogue**.
 
 Lesson 4 guides ARRIVAL 04 through approach, a practice go-around, a second approach, a runway check, and landing. Follow the current objective in the lesson panel; completion requires the aircraft to stop and release the runway.
 
@@ -102,13 +102,13 @@ The **Flight strip** panel shows the selected aircraft's callsign, status, curre
 
 Aircraft leaving the radar sector are removed automatically in Sandbox, so continuous traffic does not fill the aircraft limit with invisible targets.
 
-The scrollable **Traffic strips** list shows every active aircraft's destination, status, assigned altitude, heading, and speed. Click a strip to select its aircraft for clearances; the selected strip is highlighted blue and emergency aircraft show **PRIORITY**. The list also remains available beside DOS and Teletext radar views.
+The scrollable **Traffic strips** list shows every active aircraft's destination, status, assigned altitude, heading, and speed. Click a strip to select its aircraft for clearances; the selected strip is highlighted blue, and emergency aircraft show **PRIORITY**. The list also remains available beside DOS and Teletext radar views.
 
 Enter a controller name on the main menu (or lesson menu) to use it in Lesson and Sandbox dialogue, the status bar, and lesson reports. Leave it blank to use **Controller**. The name is kept only while the app is open and does not change Story Mode's source-labeled case files. Lesson and Story completion is saved locally between sessions; use **Reset progress** on the main menu to clear it.
 
 The case studies unlock chronologically through four documented 1990s runway events: **Detroit in dense fog (1990)**, **Los Angeles runway collision (1991)**, **St. Louis wrong-runway entry (1994)**, and **Providence surface confusion (1999)**. Each chapter uses a schematic runway and simplified choices rather than recreating exact movement tracks or procedures. Chapter IDs remain stable so saved completion progress stays compatible. Each chapter shows its NTSB identifier and an **Open NTSB report** button. **Retry checkpoint** restores the latest decision stage. Sources: [Detroit 1990](https://www.ntsb.gov/investigations/Pages/DCA91MA010.aspx), [Los Angeles 1991](https://www.ntsb.gov/investigations/Pages/DCA91MA018.aspx), [St. Louis 1994](https://www.ntsb.gov/investigations/Pages/CHI95MA044.aspx), and [Providence 1999](https://www.ntsb.gov/safety/safety-recs/RecLetters/A00_66_71.pdf).
 
-Sandbox controls let you spawn or remove traffic, pause or resume, change simulation speed, and set simple weather, time, and traffic labels. Up to 30 unique aircraft can be active. Safety checks block invalid transmissions and predicted separation warnings appear on radar. Lesson 3 pauses at the training safety boundary and offers a safe retry.
+Sandbox controls let you spawn or remove traffic, pause or resume, change simulation speed, and set simple weather, time, and traffic labels. Up to 30 unique aircraft can be active. Safety checks block invalid transmissions, and predicted separation warnings appear on radar. Lesson 3 pauses at the training safety boundary and offers a safe retry.
 
 Switching to another app or minimizing LtATC automatically pauses gameplay in every mode. When you return, click **Resume** to continue. Moving focus between controls within LtATC does not pause the game.
 
@@ -139,9 +139,9 @@ To try game over, open Sandbox, click **Collision demo**, then **Resume**. The d
 
 `GameState` owns mode transitions, scene restarts, actor creation, and persisted completion progress. Repeated requests for the active lesson or chapter do nothing; Retry explicitly resets that scene. The core simulation is shared across all modes and independent of Tkinter. Aircraft positions in Story Mode are schematic and static; the decision studies are about reading documented risk and choosing a response, not recreating the exact event or training real-world procedures.
 
-## The Game: Powered by Tcl/Tk
+## Powered by Tcl/Tk
 
 <img width="113" height="175" alt="pwrdLogo175" src="https://github.com/user-attachments/assets/50c4e081-63e5-4ea3-872f-29bd96990d5a" />
 
 ## Feedback
-Bugs and pull requests are welcome; the Code of Conduct remains planned. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
+Bugs and pull requests are welcome; the Code of Conduct is now published. See CODE_OF_CONDUCT.md for more details. These bugs are fixed and will be released soon. Suggestions are welcome if you have any questions about feature requests. Security and policy remain planned.
