@@ -58,11 +58,11 @@ class MainWindow:
         self.images = self._load_images()
         self.window_icons = ()
         try:
-            plane_icon = tk.PhotoImage(file=str(ASSETS / "Plane.png"))
-            self.window_icons = (plane_icon.subsample(6), plane_icon.subsample(10))
+            plane_icon = tk.PhotoImage(file=str(ASSETS / "Plane_remastered.png"))
+            self.window_icons = (plane_icon.subsample(17), plane_icon.subsample(26))
             root.iconphoto(True, *self.window_icons)
         except tk.TclError:
-            logging.warning("Window icon unavailable: Plane.png")
+            logging.warning("Window icon unavailable: Plane_remastered.png")
         self.last_tick = time.monotonic()
         self.reported = False
         self.boundary_shown = False
@@ -340,7 +340,7 @@ class MainWindow:
                                        ("startup_airport", "startup_airport_photo.png", 2),
                                        ("Blaze", "BlazeFerrende_avatar_bust.png", 11),
                                        ("Mervyn", "Mervyn.png", 7),
-                                       ("plane_marker", "Plane.png", 10),
+                                       ("plane_marker", "Plane_remastered.png", 26),
                                        ("emblem", "Wingsley_Emblem.png", 11),
                                        ("selected_frame", "selected_frame.png", 12),
                                        ("unselected_frame", "unselected_frame.png", 12),

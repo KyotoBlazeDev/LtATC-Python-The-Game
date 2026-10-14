@@ -92,6 +92,8 @@ Sandbox **Traffic rate** now generates airborne traffic automatically: Low every
 
 The graphical radar shows a short aircraft trail and a yellow dashed **8-second target-direction preview** for the selected airborne aircraft. The preview uses target heading and speed, so it is a simplified projection rather than the actual curved turning path. Trails clear when traffic is removed or a scenario restarts.
 
+The remastered red plane artwork supplies the window icon and the icon for newly built portable executables. On graphical radar, aircraft markers rotate with their current heading in five-degree steps; DOS and Teletext retain their character markers.
+
 Use the **Sandbox** menu for these activities:
 
 - **Start three-minute shift** starts fresh traffic and increases the rate from Low to Medium to High each minute. Guide aircraft out of the sector or land them while maintaining separation. Manual spawning and removal are disabled during a shift. The report awards 100 points per completed assignment plus one point per second without a current separation warning. Paused time does not count. Completion or collision freezes the shift; start another shift or use Simulation → Reset Scenario for regular Sandbox.

@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui.plane_sprite import PlaneSprite
 import tkinter.font as tkfont
 import time
 from math import cos, radians, sin
@@ -19,6 +20,7 @@ class RadarCanvas(tk.Canvas):
         super().__init__(parent, bg="#101e23", highlightthickness=0, width=700, height=590)
         self.on_select = on_select
         self.plane_image = plane_image
+        self.plane_sprite = PlaneSprite(plane_image) if plane_image else None
         self.selected_frame = selected_frame
         self.unselected_frame = unselected_frame
         self.paused_image = paused_image
@@ -129,8 +131,8 @@ class RadarCanvas(tk.Canvas):
                 self.create_oval(x-26, y-26, x+26, y+26, outline=color, width=2)
             h = radians(plane.heading)
             self.create_line(x, y, x+sin(h)*32*scale_x, y-cos(h)*32*scale_y, fill=color, width=2)
-            if self.plane_image:
-                self.create_image(x, y, image=self.plane_image)
+            if self.plane_sprite:
+                self.create_image(x, y, image=self.plane_sprite.at_heading(plane.heading), tags="plane_marker")
             else:
                 self.create_oval(x-5, y-5, x+5, y+5, fill=color)
             label_x, anchor = (x-12, "se") if x > width-140 else (x+12, "sw")

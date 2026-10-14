@@ -179,6 +179,10 @@ class FeatureSmokeTests(unittest.TestCase):
             window.refresh()
             self.assertTrue(window.radar.find_withtag("exit_gate"))
             self.assertIn("DEST EAST", window.aircraft_panel.label.cget("text"))
+            self.assertTrue(window.radar.find_withtag("plane_marker"))
+            sprite = window.radar.plane_sprite
+            self.assertIsNot(sprite.at_heading(0), sprite.at_heading(90))
+            self.assertLessEqual(sprite.size, 48)
             self.assertEqual(set(window.aircraft_panel.strips), set(window.simulation.aircraft))
             strip = window.aircraft_panel.strips["ACADEMY 02"]
             self.assertIn("EAST", strip.cget("text"))

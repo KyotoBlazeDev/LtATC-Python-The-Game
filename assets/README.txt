@@ -1,7 +1,9 @@
 Included artwork is loaded directly by Tkinter. The logo appears on the menu;
 boom_explosion.png marks the collision location on the standard radar at game over;
 Blaze appears as a dialogue portrait; Mervyn's supplied mascot artwork is retained
-for future lesson integration. Plane.png marks radar targets;
+for future lesson integration. Plane_remastered.png supplies the window and portable
+executable icon and radar targets, which rotate with current heading in five-degree
+steps. Plane.png is retained as the original artwork;
 selected_frame.png and unselected_frame.png frame targets on the standard radar;
 paused.png appears over the standard radar while the simulation is paused;
 critical.png blinks over the standard radar during a critical separation conflict;
