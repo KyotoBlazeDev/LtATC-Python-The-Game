@@ -12,7 +12,7 @@ _Game cover art of LtATC: Python The Game._
 
 ## Current status
 
-**Public beta — v0.9.0 Beta 4**
+**Public beta — v0.9.0 Beta 5**
 
 Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
 
