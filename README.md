@@ -124,6 +124,16 @@ Choose **View → Teletext Display** during gameplay to open the 40 × 25 charac
 
 Choose **View → DOS Console** for a separate 80 × 25 blue-screen tactical view with a traffic roster and a `C:\LTATC>` command prompt. Type `HELP` to see commands. `DIR` lists the game's four virtual files, and `TYPE RADAR.SCR`, `TYPE TRAFFIC.DAT`, `TYPE RUNWAY.DAT`, or `TYPE ALERTS.LOG` reads live game information. `CLS`, `VER`, `STATUS`, `SELECT <callsign>`, `PAUSE`, and `RESUME` are also supported; Up recalls prior commands. These are in-game commands, not operating-system commands. DOS mode uses Modern DOS 8x16 when installed, with a Consolas fallback. DOS mode and Teletext display are mutually exclusive. Modern DOS 8x16 is by Jayvee Enaguas and is released under CC0; see the [font's provenance and license](https://github.com/susam/pcface#modern-dos-font). The DOS font is not bundled with the game.
 
+### Artwork and AI Transparency
+
+All original visual assets for LtATC: Python The Game are handmade by the developer, KyotoBlazeDev. Generative AI is not used to create the game's original artwork.
+
+AI-assisted development tools, including Codex, may assist with programming, debugging, and implementation under human supervision.
+
+The developer retains creative control and responsibility for the project's design and published content.
+
+Third-party resources, where applicable, are credited separately.
+
 ## Image credits
 
 Startup airport photograph by [Johannes Heel](https://unsplash.com/id/@j_heel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/id/foto/sebuah-pesawat-besar-terbang-di-atas-landasan-pacu-XmLULwMRxcU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText), used under the [Unsplash License](https://unsplash.com/id/lisensi). The project includes a resized PNG derivative for Tkinter alongside the downloaded source photograph.
