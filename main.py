@@ -3,9 +3,11 @@ import logging
 import argparse
 import tkinter as tk
 from ui.main_window import MainWindow
+from app_version import current_version
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="LtATC: Python The Game")
+    parser.add_argument("--version", action="version", version=current_version())
     parser.add_argument("--smoke-test", metavar="REPORT", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.smoke_test:

@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from release_config import VERSION_PATTERN
+from app_version import VERSION
 
 
 def build(version):
@@ -26,16 +27,20 @@ def build(version):
     artifacts.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(dir=artifacts, prefix="portable-") as temporary:
         staging = Path(temporary)
+        metadata = staging / "build-info.json"
+        metadata.write_text(json.dumps({"version": version}), encoding="utf-8")
         subprocess.run([
             sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean",
             "--onedir", "--windowed", "--noupx", "--name", "LtATC",
             "--icon", str(ROOT / "assets" / "Plane_remastered.png"),
             "--distpath", str(staging / "dist"), "--workpath", str(staging / "build"),
             "--specpath", str(staging), "--add-data", f"{ROOT / 'assets'}:assets", str(ROOT / "main.py"),
+            "--add-data", f"{metadata}:.",
         ], cwd=ROOT, check=True)
         bundle = staging / "dist" / "LtATC"
         for name in ("README.md", "LICENSE"):
             shutil.copy2(ROOT / name, bundle / name)
+        shutil.copy2(ROOT / "RELEASE_NOTES.md", bundle / "RELEASE_NOTES.md")
         (bundle / "PLAY.txt").write_text(
             f"LtATC {version} - Windows x64 portable edition\n\n"
             "Extract the entire ZIP, then open LtATC.exe. Keep _internal beside it.\n"
@@ -47,6 +52,11 @@ def build(version):
         candidate = Path(shutil.make_archive(str(staging / filename), "zip", bundle.parent, "LtATC"))
         extracted = staging / "extracted"
         shutil.unpack_archive(candidate, extracted)
+        for source in (ROOT / "assets").rglob("*"):
+            if source.is_file():
+                packaged = extracted / "LtATC" / "_internal" / "assets" / source.relative_to(ROOT / "assets")
+                if not packaged.is_file() or hashlib.sha256(source.read_bytes()).digest() != hashlib.sha256(packaged.read_bytes()).digest():
+                    raise RuntimeError(f"Packaged asset missing or changed: {source.name}")
         # Launch away from the source tree: assets must come from the ZIP.
         isolated = staging / "smoke"
         isolated.mkdir()
@@ -61,7 +71,7 @@ def build(version):
         if not report.exists():
             raise RuntimeError(f"Packaged game produced no smoke report (exit {process.returncode})")
         details = json.loads(report.read_text(encoding="utf-8"))
-        if process.returncode != 0 or details.get("ok") is not True:
+        if process.returncode != 0 or details.get("ok") is not True or details.get("version") != version:
             raise RuntimeError(f"Packaged smoke test failed: {details}")
         shutil.copy2(report, artifacts / f"{filename}-smoke.json")
         output = artifacts / candidate.name
@@ -73,5 +83,5 @@ def build(version):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("version")
+    parser.add_argument("version", nargs="?", default=VERSION)
     build(parser.parse_args().version)

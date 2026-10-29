@@ -21,6 +21,7 @@ from ui.lesson_panel import LessonPanel
 from ui.radar_canvas import RadarCanvas
 from ui.story_panel import StoryPanel
 from ui.theme import CLASSIC_GRAY, classic_title_bar, apply_classic_theme
+from app_version import current_version
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 INCIDENT_CONTENT_WARNING = (
@@ -42,7 +43,7 @@ def load_bedstead(root):
 class MainWindow:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        root.title("LtATC: Python The Game")
+        root.title(f"LtATC: Python The Game {current_version()}")
         root.geometry("1100x700")
         root.minsize(760, 600)
         self.game = GameState(default_progress_path())

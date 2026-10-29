@@ -6,6 +6,7 @@ import tkinter as tk
 
 from sandbox.persistence import load_scenario, save_scenario
 from ui.main_window import ASSETS, MainWindow
+from app_version import current_version
 
 
 def run_smoke_test(report_path):
@@ -28,6 +29,13 @@ def run_smoke_test(report_path):
         window.show_menu()
         root.update()
         window.start_sandbox()
+        if not window.window_icons or window.radar.plane_sprite is None:
+            raise RuntimeError("Remastered window icon or plane sprite is missing")
+        sprite = window.radar.plane_sprite
+        for heading in range(0, 360, 5):
+            sprite.at_heading(heading)
+        if len(sprite.frames) != 72:
+            raise RuntimeError("Heading sprite cache is incomplete")
         window.select_aircraft("ACADEMY 02")
         window.refresh()
         root.update()
@@ -46,7 +54,8 @@ def run_smoke_test(report_path):
             root.update()
         if callback_errors:
             raise RuntimeError("GUI callbacks failed: " + "; ".join(callback_errors))
-        result = {"ok": True, "images": len(window.images), "animation_frames": len(frames)}
+        result = {"ok": True, "version": current_version(), "images": len(window.images),
+                  "animation_frames": len(frames), "sprite_frames": len(sprite.frames)}
     except Exception:
         result["error"] = traceback.format_exc()
     finally:
