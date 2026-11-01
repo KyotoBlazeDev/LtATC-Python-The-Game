@@ -39,6 +39,9 @@ On a desktop touchscreen, enable **Touch controls** in the gameplay toolbar for
 buttons sized to at least 44 effective pixels in each dimension (using Tk's
 display scaling), wider radar tap targets, and
 **Controls up/down** and **Traffic up/down** buttons for scrolling without a wheel.
+Swipe vertically over sidebar text, blank space or buttons to scroll; swiping
+over a button cancels its action. Swipes within an overflowing traffic list
+scroll that list. Menus, text fields and scrollbar thumbs keep their normal input.
 When radar targets overlap, selection uses the nearest target; flight strips
 also let you choose a specific aircraft. Touch mode includes Pause/Resume,
 Previous/Next aircraft and Clear selection buttons. Sandbox settings move into

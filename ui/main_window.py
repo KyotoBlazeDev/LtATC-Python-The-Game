@@ -21,7 +21,7 @@ from ui.lesson_panel import LessonPanel
 from ui.radar_canvas import RadarCanvas
 from ui.story_panel import StoryPanel
 from ui.theme import CLASSIC_GRAY, classic_title_bar, apply_classic_theme
-from ui.touch import size_touch_control, size_touch_tree
+from ui.touch import size_touch_control, size_touch_tree, TouchScroller
 from app_version import current_version
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
@@ -77,6 +77,10 @@ class MainWindow:
         root.bind("<KeyPress>", self._select_aircraft_with_key, add="+")
         root.bind("<MouseWheel>", self._scroll_sidebar, add="+")
         root.bind("<Map>", self._size_mapped_touch_control, add="+")
+        self.touch_scroller = TouchScroller(root,
+            lambda: (self.sidebar_canvas, self.aircraft_panel.canvas)
+                if self._display_widgets_ready() and hasattr(self, "aircraft_panel") else (),
+            lambda: hasattr(self, "touch_enabled") and self.touch_enabled.get())
         self.show_startup()
         self.tick_job = None
         root.bind("<Destroy>", self._on_root_destroy, add="+")
@@ -855,6 +859,7 @@ class MainWindow:
             self.touch_scroll.pack_forget()
 
     def _size_mapped_touch_control(self, event):
+        self.touch_scroller.attach(event.widget)
         if hasattr(self, "touch_enabled") and self.touch_enabled.get():
             size_touch_control(event.widget, True)
 
