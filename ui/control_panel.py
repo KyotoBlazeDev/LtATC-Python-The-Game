@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui.touch import size_touch_control
 from game.aircraft import AircraftState
 from game.clearances import Clearance, ClearanceType
 
@@ -6,6 +7,7 @@ class ControlPanel(tk.LabelFrame):
     def __init__(self, parent, on_clearance):
         super().__init__(parent, text="Clearances", padx=8, pady=8)
         self.on_clearance = on_clearance
+        self.touch_enabled = False
         self.buttons = {}
         for i, (label, kind) in enumerate((("Takeoff", ClearanceType.TAKEOFF), ("Heading", ClearanceType.HEADING),
                                            ("Altitude", ClearanceType.ALTITUDE), ("Speed", ClearanceType.SPEED),
@@ -34,6 +36,12 @@ class ControlPanel(tk.LabelFrame):
         for i, value in enumerate(values):
             tk.Button(self.options, text=str(value), command=lambda v=value: self.on_clearance(Clearance(kind, v))).grid(
                 row=i//3, column=i%3, padx=1, pady=2, sticky="ew")
+        self.set_touch_enabled(self.touch_enabled)
+
+    def set_touch_enabled(self, enabled):
+        self.touch_enabled = enabled
+        for button in (*self.buttons.values(), *self.options.winfo_children()):
+            size_touch_control(button, enabled)
 
     def refresh(self, plane, sandbox=False):
         ground = {AircraftState.PARKED, AircraftState.HOLDING_SHORT, AircraftState.LINE_UP, AircraftState.LANDED}

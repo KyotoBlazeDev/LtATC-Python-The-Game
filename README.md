@@ -35,6 +35,18 @@ In the 1990s, you work as an air traffic controller, interpreting the radar pict
 
 ## Run
 
+On a desktop touchscreen, enable **Touch controls** in the gameplay toolbar for
+buttons sized to at least 44 effective pixels in each dimension (using Tk's
+display scaling), wider radar tap targets, and
+**Controls up/down** and **Traffic up/down** buttons for scrolling without a wheel.
+When radar targets overlap, selection uses the nearest target; flight strips
+also let you choose a specific aircraft. Touch mode includes Pause/Resume,
+Previous/Next aircraft and Clear selection buttons. Sandbox settings move into
+the scrolling sidebar in touch mode to preserve radar space in smaller windows.
+The setting lasts for the current app
+session. This uses the operating system's single-touch mouse events in Tk;
+multitouch gestures and an iOS/Android build are not implemented.
+
 Use Python 3.11 or newer. No packages or network access are required.
 
 ```powershell

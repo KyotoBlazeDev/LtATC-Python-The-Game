@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui.touch import size_touch_control
 
 class AircraftPanel(tk.LabelFrame):
     def __init__(self, parent, on_select=None):
@@ -7,6 +8,7 @@ class AircraftPanel(tk.LabelFrame):
         self.label.pack(anchor="w", fill="x")
         self.on_select = on_select
         self.strips = {}
+        self.touch_enabled = False
         self.traffic_title = tk.Label(self, text="Traffic strips (0)", anchor="w")
         self.traffic_title.pack(fill="x", pady=(6, 2))
         container = tk.Frame(self)
@@ -21,6 +23,20 @@ class AircraftPanel(tk.LabelFrame):
         self.canvas.bind("<Configure>", lambda event: self.canvas.itemconfigure(row_window, width=event.width))
         self.rows.bind("<Configure>", lambda event: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.empty = tk.Label(self.rows, text="No active aircraft", anchor="w")
+        self.touch_scroll = tk.Frame(self)
+        for label, amount in (("Traffic up", -1), ("Traffic down", 1)):
+            tk.Button(self.touch_scroll, text=label, pady=10,
+                      command=lambda n=amount: self.canvas.yview_scroll(n, "pages")).pack(
+                          side="left", fill="x", expand=True)
+
+    def set_touch_enabled(self, enabled):
+        self.touch_enabled = enabled
+        if enabled:
+            self.touch_scroll.pack(fill="x")
+        else:
+            self.touch_scroll.pack_forget()
+        for button in self.strips.values():
+            size_touch_control(button, enabled)
 
     def refresh(self, plane, aircraft=()):
         if plane is None:
@@ -54,3 +70,4 @@ class AircraftPanel(tk.LabelFrame):
                              background="#000080" if selected else "#c0c0c0",
                              foreground="#ffffff" if selected else "#a00000" if item.emergency else "#000000",
                              relief="sunken" if selected else "raised")
+            size_touch_control(button, self.touch_enabled)

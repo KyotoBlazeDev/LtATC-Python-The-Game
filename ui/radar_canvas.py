@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui.touch import touch_pixels
 from ui.plane_sprite import PlaneSprite
 import tkinter.font as tkfont
 import time
@@ -33,6 +34,7 @@ class RadarCanvas(tk.Canvas):
         self.on_teletext_page = on_teletext_page
         self.bind("<Button-1>", self._click)
         self.positions = {}
+        self.touch_enabled = False
         self.teletext = False
         self.dos = False
         self.teletext_page = 100
@@ -65,10 +67,14 @@ class RadarCanvas(tk.Canvas):
             return
         hit_x = self.winfo_width() / (160 if self.dos else 80) if self.teletext or self.dos else 24
         hit_y = self.winfo_height() / 50 if self.teletext or self.dos else 24
-        for callsign, (x, y) in reversed(list(self.positions.items())):
-            if abs(event.x - x) <= hit_x and abs(event.y - y) <= hit_y:
-                self.on_select(callsign)
-                return
+        if self.touch_enabled:
+            radius = touch_pixels(self, 32)
+            hit_x, hit_y = max(radius, hit_x), max(radius, hit_y)
+        candidates = [((event.x - x) ** 2 + (event.y - y) ** 2, callsign)
+                      for callsign, (x, y) in self.positions.items()
+                      if abs(event.x - x) <= hit_x and abs(event.y - y) <= hit_y]
+        if candidates:
+            self.on_select(min(candidates, key=lambda item: item[0])[1])
 
     def refresh(self, simulation, conflicts=()):
         self.delete("all")

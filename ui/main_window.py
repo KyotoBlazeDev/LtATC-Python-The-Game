@@ -21,6 +21,7 @@ from ui.lesson_panel import LessonPanel
 from ui.radar_canvas import RadarCanvas
 from ui.story_panel import StoryPanel
 from ui.theme import CLASSIC_GRAY, classic_title_bar, apply_classic_theme
+from ui.touch import size_touch_control, size_touch_tree
 from app_version import current_version
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
@@ -75,6 +76,7 @@ class MainWindow:
         self._build_status_bar()
         root.bind("<KeyPress>", self._select_aircraft_with_key, add="+")
         root.bind("<MouseWheel>", self._scroll_sidebar, add="+")
+        root.bind("<Map>", self._size_mapped_touch_control, add="+")
         self.show_startup()
         self.tick_job = None
         root.bind("<Destroy>", self._on_root_destroy, add="+")
@@ -718,6 +720,10 @@ class MainWindow:
         toolbar.pack(fill="x")
         navigation = tk.Frame(toolbar)
         navigation.pack(fill="x")
+        if not hasattr(self, "touch_enabled"):
+            self.touch_enabled = tk.BooleanVar(value=False)
+        tk.Checkbutton(navigation, text="Touch controls", variable=self.touch_enabled,
+                       command=self._apply_touch_controls).pack(side="right")
         tk.Button(navigation, text="Main menu", command=self.show_menu).pack(side="left")
         if self.simulation.mode == GameMode.LESSON:
             tk.Button(navigation, text="Lessons", command=self.show_lesson_menu).pack(side="left", padx=4)
@@ -771,6 +777,11 @@ class MainWindow:
         sidebar = tk.Frame(body, width=360)
         sidebar.pack(side="right", fill="y")
         sidebar.pack_propagate(False)
+        self.touch_scroll = tk.Frame(sidebar)
+        for label, amount in (("Controls up", -1), ("Controls down", 1)):
+            tk.Button(self.touch_scroll, text=label, pady=10,
+                      command=lambda n=amount: self.sidebar_canvas.yview_scroll(n, "pages")).pack(
+                          side="left", fill="x", expand=True)
         scrollbar = tk.Scrollbar(sidebar, orient="vertical")
         scrollbar.pack(side="right", fill="y")
         self.sidebar_canvas = tk.Canvas(sidebar, highlightthickness=0,
@@ -783,6 +794,16 @@ class MainWindow:
         right.bind("<Configure>", lambda event: self.sidebar_canvas.configure(scrollregion=self.sidebar_canvas.bbox("all")))
         self.sidebar_canvas.bind("<Configure>", lambda event: self.sidebar_canvas.itemconfigure(sidebar_window, width=event.width))
         self.radar.pack(side="left", fill="both", expand=True)
+        self.touch_actions = tk.Frame(right)
+        for index, (label, command) in enumerate((
+                ("Pause", self.simulation.pause), ("Resume", self.simulation.resume),
+                ("Previous aircraft", lambda: self._touch_select(-1)),
+                ("Next aircraft", lambda: self._touch_select(1)),
+                ("Clear selection", lambda: self.select_aircraft(None)))):
+            tk.Button(self.touch_actions, text=label, command=command).grid(
+                row=index // 2, column=index % 2, sticky="ew", padx=2, pady=2)
+        for column in range(2):
+            self.touch_actions.columnconfigure(column, weight=1)
         self.lesson_panel = LessonPanel(right, self.next_dialogue, self.check_runway)
         self.lesson_panel.pack(fill="x", pady=4)
         self.story_panel = None
@@ -793,7 +814,57 @@ class MainWindow:
         self.aircraft_panel.pack(fill="x", pady=4)
         self.controls = ControlPanel(right, self.issue_clearance)
         self.controls.pack(fill="x", pady=4)
+        # Settings also scroll: enlarging controls must not consume the radar's
+        # entire height on a small tablet window.
+        self.sidebar_content = right
+        self._apply_touch_controls()
         self.refresh()
+
+    def _apply_touch_controls(self):
+        enabled = self.touch_enabled.get()
+        self.radar.touch_enabled = enabled
+        self.controls.set_touch_enabled(enabled)
+        self.aircraft_panel.set_touch_enabled(enabled)
+        size_touch_tree(self.frame, enabled)
+        if self.simulation.mode == GameMode.SANDBOX:
+            for settings in self.sandbox_settings:
+                settings.pack_forget()
+                settings.pack(in_=self.sidebar_content if enabled else self.game_toolbar,
+                              fill="x", pady=(3, 0))
+            for group, columns in self.touch_setting_groups:
+                children = group.winfo_children()
+                for child in children:
+                    if enabled:
+                        if not hasattr(child, "_desktop_pack"):
+                            child._desktop_pack = child.pack_info()
+                        child.pack_forget()
+                    else:
+                        child.grid_forget()
+                for index, child in enumerate(children):
+                    if enabled:
+                        child.grid(row=index // columns, column=index % columns,
+                                   sticky="ew", padx=2, pady=2)
+                    elif hasattr(child, "_desktop_pack"):
+                        child.grid_forget()
+                        child.pack(**child._desktop_pack)
+        if enabled:
+            self.touch_actions.pack(fill="x", before=self.lesson_panel)
+            self.touch_scroll.pack(side="bottom", fill="x", before=self.sidebar_canvas)
+        else:
+            self.touch_actions.pack_forget()
+            self.touch_scroll.pack_forget()
+
+    def _size_mapped_touch_control(self, event):
+        if hasattr(self, "touch_enabled") and self.touch_enabled.get():
+            size_touch_control(event.widget, True)
+
+    def _touch_select(self, direction):
+        callsigns = list(self.simulation.aircraft)
+        if not callsigns:
+            return
+        current = self.simulation.selected_callsign
+        index = callsigns.index(current) if current in callsigns else (-1 if direction > 0 else 0)
+        self.select_aircraft(callsigns[(index + direction) % len(callsigns)])
 
     def _toggle_teletext(self):
         if self.teletext_enabled.get():
@@ -894,8 +965,9 @@ class MainWindow:
         return "break"
 
     def _build_sandbox_toolbar(self, bar):
-        settings = tk.LabelFrame(bar, text="Environment", padx=3, pady=2)
-        settings.pack(fill="x", pady=(3, 0))
+        self.game_toolbar = bar
+        settings = tk.LabelFrame(self.frame, text="Environment", padx=3, pady=2)
+        settings.pack(in_=bar, fill="x", pady=(3, 0))
         options_row = tk.Frame(settings)
         options_row.pack(fill="x")
         for label, variable, options in (("Traffic rate", "traffic_rate", ("Manual", "Low", "Medium", "High")),
@@ -915,8 +987,10 @@ class MainWindow:
             var = tk.BooleanVar(value=getattr(target, attribute))
             tk.Checkbutton(toggles, text=label, variable=var,
                             command=lambda t=target, a=attribute, v=var: setattr(t, a, v.get())).pack(side="left", padx=3)
-        safety_settings = tk.LabelFrame(bar, text="Safety thresholds", padx=3, pady=2)
-        safety_settings.pack(fill="x", pady=(3, 0))
+        safety_settings = tk.LabelFrame(self.frame, text="Safety thresholds", padx=3, pady=2)
+        safety_settings.pack(in_=bar, fill="x", pady=(3, 0))
+        self.sandbox_settings = (settings, safety_settings)
+        self.touch_setting_groups = ((options_row, 2), (toggles, 1), (safety_settings, 2))
         safety = self.simulation.safety
         self.safety_threshold_vars = {
             "horizontal_warning": tk.StringVar(value=f"{safety.horizontal_warning:g}"),
