@@ -12,9 +12,9 @@ _Game cover art of LtATC: Python The Game._
 
 ## Current status
 
-**Public beta — v0.9.0 Beta 5**
+**Public beta — v0.9.0 Beta 6**
 
-Next candidate: **v0.9.0-beta-6 (prepared locally, unpublished)**. See
+Latest published release: **[v0.9.0-beta-6](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/releases/tag/v0.9.0-beta-6)**. See
 [release notes](RELEASE_NOTES.md) for the comparison with Beta 5 and packaging changes.
 
 Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
@@ -151,6 +151,12 @@ AI-assisted development tools, including Codex, may assist with programming, deb
 The developer retains creative control and responsibility for the project's design and published content.
 
 Third-party resources, where applicable, are credited separately.
+
+## License
+
+Original LtATC source code is licensed under **GNU GPL-3.0-or-later**. See [LICENSE](LICENSE) for the full license text. This change applies to future distributions of the original code and does not revoke rights already granted under CC0-1.0 for earlier versions.
+
+Third-party resources are **not automatically relicensed under GPL**. The bundled Bedstead font remains CC0, the separately referenced Modern DOS font remains CC0, and the startup photograph and its derivative are credited below under the Unsplash License. Respect the original licensing and attribution of each resource when redistributing or modifying the project.
 
 ## Image credits
 
