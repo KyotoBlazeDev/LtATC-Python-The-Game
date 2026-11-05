@@ -3,7 +3,7 @@ Welcome to contributing to the LtATC: Python The Game! Please read the contribut
 Any issues and bugs are appreciated. But it's important to read this.
 
 ## Contributing guide
-*The Code of Conduct are planned*
+Please follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Ways to Contribute
 
@@ -141,3 +141,7 @@ A pull request should include:
 - Screenshots for visible UI changes
 - Sources for historical changes
 - Any known limitations
+
+## Licensing contributions
+
+Original code contributions are accepted under **GPL-3.0-or-later**. By submitting a contribution, you confirm you have the rights needed to provide it under that license. Preserve third-party copyright notices, credits, and applicable license terms; do not assume external artwork, fonts, or photographs are GPL-licensed. Previously distributed CC0-1.0 material retains its prior permissions.
