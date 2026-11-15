@@ -12,10 +12,10 @@ _Game cover art of LtATC: Python The Game._
 
 ## Current status
 
-**Public beta — v0.9.0 Beta 6**
+**Local release candidate — v0.9.0 Beta 7**
 
 Latest published release: **[v0.9.0-beta-6](https://github.com/KyotoBlazeDev/LtATC-Python-The-Game/releases/tag/v0.9.0-beta-6)**. See
-[release notes](RELEASE_NOTES.md) for the comparison with Beta 5 and packaging changes.
+[Beta 7 release notes](RELEASE_NOTES.md) for the desktop touch controls and November licensing update.
 
 Release date: ~~**October 7, 2026**~~. I’ve rescheduled it to **December 20, 2026**. The complexity of the project requires more time, and with exams coming up, I want to ensure I deliver my best ideas and features. Codex will continue to co-author the development under human oversight. KyotoBlazeDev will continue as a work in progress, though bugs may be encountered.
 
@@ -67,7 +67,7 @@ To build locally with 64-bit Python 3.12 on Windows:
 
 ```powershell
 python -m pip install -r requirements-build.txt
-python scripts/build_portable.py v0.9.0-beta-6
+python scripts/build_portable.py
 ```
 
 The script writes a ZIP, its `.zip.sha256` checksum, and a smoke-test JSON report

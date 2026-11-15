@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version, e.g. v0.9.0-beta-6 (blank creates a preview ZIP)"
+        description: "Version, e.g. v0.9.0-beta-7 (blank creates a preview ZIP)"
         required: false
         type: string
       create_draft:

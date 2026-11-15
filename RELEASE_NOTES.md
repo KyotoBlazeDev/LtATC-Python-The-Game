@@ -1,41 +1,34 @@
-# LtATC v0.9.0-beta-6 — prepared, unpublished
+# LtATC v0.9.0-beta-7
 
-This beta improves portable release verification and version identification.
+## Desktop touch controls
 
-- The window title and `--version` identify the running version. Portable builds
-  carry their requested tag, including preview tags, independently of the source default.
-- Packaging verifies every bundled asset against the source after extracting the
-  ZIP. The packaged GUI check now requires the remastered window icon and all 72
-  cached plane headings, and checks the running build version.
-- The portable ZIP includes these notes. The release workflow uses them when
-  preparing a Beta 6 draft; other tags retain generated notes.
-- README changes since Beta 5 clarify handmade artwork and AI-assisted development.
+- Enable **Touch controls** in the gameplay toolbar. Buttons grow to at least
+  44 effective pixels with Tk display scaling, and radar targets are easier to
+  tap. When targets overlap, the radar selects the nearest aircraft. Tap a
+  flight strip to select a specific aircraft.
+- Use **Pause/Resume**, **Previous/Next aircraft**, and **Clear selection**
+  directly from the touch interface. Sandbox settings move into the scrolling
+  sidebar to free up radar space in smaller windows.
+- Swipe vertically over sidebar text, blank space, or buttons to scroll. A
+  swipe starting on a button cancels its action. Swiping over an overflowing
+  traffic list scrolls that list. **Controls up/down** and **Traffic up/down**
+  also provide scrolling without a wheel.
+- Touch mode lasts for the current session and uses the desktop operating
+  system's single-touch mouse events in Tk. Multitouch and mobile builds remain
+  unsupported.
 
-## Comparison with the published Beta 5
+## November 5 licensing update
 
-Verified on October 29, 2026: published `v0.9.0-beta-5` points to `a3fe82b`;
-local and GitHub `main` both point to `11b12d4`. Before this preparation, the
-tree difference was only README.md (11 insertions, one deletion).
-
-Beta 5 already shipped traffic strips, `Plane_remastered.png`, five-degree
-radar rotation, and the portable Windows build with extracted-ZIP smoke testing.
-Those features are retained here, not newly introduced in Beta 6. Beta 5 was
-published October 14, 2026 with a Windows x64 ZIP and SHA-256 file.
+- Original LtATC source code is now available under **GNU GPL-3.0-or-later**.
+  Earlier CC0-1.0 grants remain valid for the versions released under those terms.
+- Third-party resources retain their own terms. The bundled Bedstead font and
+  separately referenced Modern DOS font remain CC0. The startup airport photo
+  by Johannes Heel and its resized derivative are credited under the Unsplash
+  License. See [README.md](README.md) for attribution and [LICENSE](LICENSE)
+  for the GNU GPL text.
 
 ## Running the portable edition
 
-Extract the entire ZIP and launch `LtATC/LtATC.exe`, keeping `_internal` beside
-it. Python is not required. Progress uses `%LOCALAPPDATA%\LtATC\progress.json`.
-The executable is unsigned. This educational prototype is not for operational ATC use.
-
-## Release preparation
-
-Build locally with Windows x64 Python 3.12 after installing requirements-build.txt:
-
-```powershell
-python scripts/build_portable.py v0.9.0-beta-6
-```
-
-No release date is assigned. Commit and review the prepared changes before any
-future tag or workflow dispatch. Manual workflow dispatch with `create_draft`
-unchecked produces artifacts only. Publishing requires a separate human action.
+Extract the entire Windows x64 ZIP and launch `LtATC/LtATC.exe`. Keep
+`_internal` beside the executable. The build includes its Python runtime and
+stores progress in `%LOCALAPPDATA%\LtATC\progress.json`. The executable is unsigned.
