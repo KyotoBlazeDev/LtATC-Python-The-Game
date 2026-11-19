@@ -3,13 +3,15 @@ import tkinter as tk
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+from tk_test_support import create_test_root
+
 from game.game_state import GameState
 from ui.main_window import MainWindow
 
 
 class DeleteAircraftTests(unittest.TestCase):
     def test_aircraft_shortcuts_work_while_classic_dropdown_has_focus(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)
@@ -40,7 +42,7 @@ class DeleteAircraftTests(unittest.TestCase):
             root.destroy()
 
     def test_clicking_radar_after_editing_allows_real_delete_key(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)

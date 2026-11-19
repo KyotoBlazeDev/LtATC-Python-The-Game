@@ -1,11 +1,10 @@
 """High-DPI layout checks for the fixed-size main application window."""
 
-import sys
-import tkinter as tk
 import tkinter.font as tkfont
 import unittest
-from time import sleep
 from unittest.mock import patch
+
+from tk_test_support import create_test_root
 
 from ui.main_window import INCIDENT_CONTENT_WARNING, MainWindow
 
@@ -21,14 +20,7 @@ def descendants(widget):
 
 class DpiLayoutTests(unittest.TestCase):
     def make_window(self, percentage):
-        try:
-            root = tk.Tk()
-        except tk.TclError as error:
-            # Windows CI can intermittently fail while loading Tcl's startup scripts.
-            if sys.platform != "win32" or str(error) != 'invalid command name "tcl_findLibrary"':
-                raise
-            sleep(0.1)
-            root = tk.Tk()
+        root = create_test_root()
         root.tk.call("tk", "scaling", 96 * percentage / 100 / 72)
         root.geometry("1100x700+0+0")
         with patch("ui.main_window.default_progress_path", return_value=None):

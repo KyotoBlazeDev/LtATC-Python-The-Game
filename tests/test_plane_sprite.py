@@ -1,12 +1,14 @@
 import tkinter as tk
 import unittest
 
+from tk_test_support import create_test_root
+
 from ui.plane_sprite import PlaneSprite
 
 
 class PlaneSpriteTests(unittest.TestCase):
     def test_heading_rotation_transparency_and_cache(self):
-        root = tk.Tk()
+        root = create_test_root()
         root.withdraw()
         try:
             source = tk.PhotoImage(master=root, width=3, height=3)

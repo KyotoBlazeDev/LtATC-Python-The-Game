@@ -4,6 +4,8 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+from tk_test_support import create_test_root
+
 from ui.main_window import MainWindow
 from ui.radar_canvas import RadarCanvas
 from ui.touch import touch_pixels, size_touch_control, TouchScroller
@@ -12,7 +14,7 @@ from game.clearances import ClearanceType
 
 class TouchTests(unittest.TestCase):
     def test_nested_traffic_drag_does_not_move_outer_sidebar(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             outer = tk.Canvas(root, height=250)
             outer.pack()
@@ -40,7 +42,7 @@ class TouchTests(unittest.TestCase):
             root.destroy()
 
     def test_drag_over_button_scrolls_without_invoking_and_tap_still_works(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             root.geometry("300x240")
             canvas = tk.Canvas(root)
@@ -82,7 +84,7 @@ class TouchTests(unittest.TestCase):
             root.destroy()
 
     def test_scaled_targets_and_original_padding_restored(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             for scaling in (96 / 72, 2, 7 / 3):
                 root.tk.call("tk", "scaling", scaling)
@@ -98,7 +100,7 @@ class TouchTests(unittest.TestCase):
             root.destroy()
 
     def test_radar_selects_nearest_and_expands_only_in_touch_mode(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             selected = Mock()
             radar = RadarCanvas(root, selected)
@@ -116,7 +118,7 @@ class TouchTests(unittest.TestCase):
             root.destroy()
 
     def test_touch_toggle_dynamic_options_and_rebuild(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)

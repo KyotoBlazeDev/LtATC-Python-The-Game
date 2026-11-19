@@ -3,6 +3,8 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+from tk_test_support import create_test_root
+
 from game.constants import GameMode
 from game.game_state import GameState
 from ui.main_window import MainWindow
@@ -88,8 +90,7 @@ class FocusTests(unittest.TestCase):
         window.select_aircraft.assert_not_called()
 
     def test_story_shortcut_does_not_share_simulation_menu_mnemonic(self):
-        import tkinter as tk
-        root = tk.Tk()
+        root = create_test_root()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)

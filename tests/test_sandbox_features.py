@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import tkinter as tk
 import unittest
 from unittest.mock import patch
+
+from tk_test_support import create_test_root
 
 from game.aircraft import AircraftState
 from game.game_state import GameState
@@ -150,7 +151,7 @@ class SandboxFeatureTests(unittest.TestCase):
 
 class FeatureSmokeTests(unittest.TestCase):
     def test_lesson_four_radar_and_save_load_menu(self):
-        root = tk.Tk()
+        root = create_test_root()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
                 window = MainWindow(root)

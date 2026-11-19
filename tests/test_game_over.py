@@ -4,6 +4,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+from tk_test_support import create_test_root
+
 from game.aircraft import Aircraft, AircraftState
 from game.clearances import Clearance, ClearanceType
 from game.constants import GameMode
@@ -163,7 +165,7 @@ class GameOverTests(unittest.TestCase):
 
 class GameOverRenderingTests(unittest.TestCase):
     def test_window_failure_panel_retry_and_main_menu(self):
-        root = tk.Tk()
+        root = create_test_root()
         root.withdraw()
         try:
             with patch("ui.main_window.default_progress_path", return_value=None):
@@ -205,7 +207,7 @@ class GameOverRenderingTests(unittest.TestCase):
             root.destroy()
 
     def test_asset_and_fallback_render_in_all_display_modes(self):
-        root = tk.Tk()
+        root = create_test_root()
         root.withdraw()
         try:
             path = Path(__file__).resolve().parents[1] / "assets" / "boom_explosion.png"

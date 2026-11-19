@@ -1,15 +1,16 @@
 """Stress checks for Tk callbacks, bindings, and embedded display modes."""
 
-import tkinter as tk
 import unittest
 from unittest.mock import patch
+
+from tk_test_support import create_test_root
 
 from ui.main_window import MainWindow
 
 
 class TkLifecycleStressTests(unittest.TestCase):
     def make_window(self):
-        root = tk.Tk()
+        root = create_test_root()
         root.geometry("1100x700+0+0")
         with patch("ui.main_window.default_progress_path", return_value=None):
             window = MainWindow(root)
